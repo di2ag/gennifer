@@ -25,7 +25,7 @@ services:
     build: 
         context: ./pidc
         dockerfile: Dockerfile
-    command: celery --app pidc.tasks.celery worker --loglevel=info
+    command: celery --app pidc.tasks.celery worker -Q pidc --loglevel=info
     environment:
         - CELERY_BROKER_URL=redis://redis:6379/0
         - CELERY_RESULT_BACKEND=redis://redis:6379/0
