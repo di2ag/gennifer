@@ -1,3 +1,6 @@
 [submodule "pidc"]
 	path = pidc
 	url = git@github.com:di2ag/gennifer-pidc.git
+[submodule "grisli"]
+	path = grisli
+	url = git@github.com:di2ag/gennifer-grisli.git
