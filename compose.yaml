@@ -98,6 +98,37 @@ services:
         - genie3
         - redis
 
+  grnboost2:
+    build:
+        context: ./grnboost2
+        dockerfile: Dockerfile
+    restart: always
+    user: gennifer_user
+    ports:
+        - 5004:5000
+    secrets:
+        - gennifer_key
+    environment:
+        - SECRET_KEY_FILE=/run/secrets/gennifer_key
+        - CELERY_BROKER_URL=redis://redis:6379/0
+        - CELERY_RESULT_BACKEND=redis://redis:6379/0
+          #command: gunicorn -c gunicorn.config.py -b 0.0.0.0:5000 'grnboost2:create_app()'
+    command: flask --app grnboost2 run --debug --host 0.0.0.0
+    depends_on:
+        - redis
+
+  worker-grnboost2:
+    build:
+        context: ./grnboost2
+        dockerfile: Dockerfile
+    command: celery --app grnboost2.tasks.celery worker -Q grnboost2 --loglevel=info
+    environment:
+        - CELERY_BROKER_URL=redis://redis:6379/0
+        - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+        - grnboost2
+        - redis
+
   redis:
     image: redis:6-alpine
 
