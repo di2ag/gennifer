@@ -4,3 +4,9 @@
 [submodule "grisli"]
 	path = grisli
 	url = git@github.com:di2ag/gennifer-grisli.git
+[submodule "genie3"]
+	path = genie3
+	url = https://github.com/di2ag/gennifer-genie3.git
+[submodule "grnboost2"]
+	path = grnboost2
+	url = https://github.com/di2ag/gennifer-grnboost2.git
