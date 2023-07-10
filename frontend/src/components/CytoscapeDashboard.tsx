@@ -12,6 +12,7 @@ import { HiTemplate } from "react-icons/hi";
 import { SideNavButtonItemProps } from '@/const';
 import LargeHeading from './ui/LargeHeading';
 import Paragraph from './ui/Paragraph';
+import CytoscapeClient from '@/components/CytoscapeClient';
 
 interface CytoscapeDashboardProps {
   analysisId: string;
@@ -30,19 +31,47 @@ const CytoscapeDashboard = async ({ analysisId }: CytoscapeDashboardProps) => {
   if (!user) return notFound()
 
     // Fetch genes from API
-    const genes = await fetch(getGenniferUrl() + 'genes', { next: { revalidate: 1000 }})
+    const genes = await fetch(getGenniferUrl() + 'genes/', { 
+      next: { 
+        revalidate: 1000,
+        tags: ['genes'],
+      },
+      headers: {
+      Authorization: 'Bearer ' + user.user.access_token, 
+    }})
     .then((resp) => resp.json());
     
     // Fetch datasets from API
-    const datasets = await fetch(getGenniferUrl() + 'datasets', { next: { revalidate: 1000 }})
+    const datasets = await fetch(getGenniferUrl() + 'datasets/', { 
+      next: { 
+        revalidate: 1000,
+        tags: ['datasets'],
+      },
+      headers: {
+      Authorization: 'Bearer ' + user.user.access_token, 
+    }})
     .then((resp) => resp.json());
   
     // Fetch Studies from API
-    const studies = await fetch(getGenniferUrl() + 'inference_studies', { next: { revalidate: 1000 }})
+    const studies = await fetch(getGenniferUrl() + 'studies/', { 
+      next: { 
+        revalidate: 1000,
+        tags: ['studies'],
+      },
+      headers: {
+      Authorization: 'Bearer ' + user.user.access_token, 
+    }})
     .then((resp) => resp.json());
-  
+
     // Fetch Algorithms from API
-    const algorithms = await fetch(getGenniferUrl() + 'algorithms', { next: { revalidate: 1000 }}, )
+    const algorithms = await fetch(getGenniferUrl() + 'algorithms/', { 
+      next: { 
+        revalidate: 1000,
+        tags: ['studies'],
+      },
+      headers: {
+      Authorization: 'Bearer ' + user.user.access_token, 
+    }})
     .then((resp) => resp.json());
 
     const items: SideNavButtonItemProps[] = [
@@ -80,19 +109,16 @@ const CytoscapeDashboard = async ({ analysisId }: CytoscapeDashboardProps) => {
 
   return (
     <div className="grid min-h-screen grid-cols-[auto_1fr] justify-center gap-4 overflow-hidden">
-        {/* <CytoscapeClient
-        genes={genes}
-        datasets={datasets}
-        studies={studies}
-        algorithms={algorithms}
-        /> */}
-        <aside className='container flex h-[calc(100vh_-_2rem)] w-20'>
+        <CytoscapeClient
+        items={items}
+        />
+        {/* <aside className='container flex h-[calc(100vh_-_2rem)] w-20'>
         <SideNav
         items={items} />
         </aside>
         <div className="">
           <p className="text-2xl text-gray-400 dark:text-gray-500">This is some text</p>
-        </div>
+        </div> */}
       </div>
   )
 }

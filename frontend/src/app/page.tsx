@@ -7,9 +7,6 @@ import LargeHeading from '@/ui/LargeHeading';
 
 export default async function Home() {
   
-  const data: Algorithm[] = await fetch('http://localhost/gennifer/api/algorithms')
-  .then((resp) => resp.json())
-
   return (
     <div className='relative h-screen flex items-center justify-center overflow-x-hidden'>
       <div className='container pt-32 max-w-7xl w-full mx-auto h-full'>

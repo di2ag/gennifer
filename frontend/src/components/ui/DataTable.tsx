@@ -35,6 +35,10 @@ import {
 import Button from "@/components/ui/Button"
 import { Input } from "@/components/ui/input"
 import { DatasetForm } from "../AddDatasetForm"
+import { StudyForm } from "../AddStudyForm"
+import { Dataset } from "@/app/dashboard/columns"
+import { AlgorithmProps, DatasetProps } from "@/const"
+import { TaskForm } from "../AddTaskForm"
  
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -42,7 +46,9 @@ interface DataTableProps<TData, TValue> {
   doButtonText: string
   searchPlaceholderText: string
   searchValue: string
-
+  studyId?: number
+  algorithms?: AlgorithmProps[]
+  datasets?: DatasetProps[]
 }
  
 export function DataTable<TData, TValue>({
@@ -51,6 +57,9 @@ export function DataTable<TData, TValue>({
   doButtonText,
   searchPlaceholderText,
   searchValue,
+  studyId,
+  algorithms,
+  datasets,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -129,9 +138,25 @@ export function DataTable<TData, TValue>({
         </Table>
         </div>
         <div className="flex items-center justify-between">
-        <div className="flex items-center justify-start space-x-2 py-4">
-        {doButtonText === 'Add Dataset' && DatasetForm()}
-        </div>
+        {
+          doButtonText === 'Add Dataset' && 
+          <div className="flex items-center justify-start space-x-2 py-4">
+            {DatasetForm()}
+          </div>
+        }
+        {
+        doButtonText === 'Create Study' && 
+          <div className="flex items-center justify-start space-x-2 py-4">
+            {StudyForm()}
+          </div>
+        }
+        {
+        doButtonText === 'Add Task' && 
+          <div className="flex items-center justify-start space-x-2 py-4">
+            {
+            TaskForm({studyId: studyId!, algorithms: algorithms!, datasets: datasets!})}
+          </div>
+        }          
         <div className="flex items-center justify-end space-x-2 py-4">
             <Button
             variant="outline"

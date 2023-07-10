@@ -1,6 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import TData, { Dispatch, ReactNode, SetStateAction } from "react";
 
+export type BadRequest = {
+    code: "bad_request";
+    message: string;
+  };
+
 export interface GeneProps {
     pk: number;
     name: string;
@@ -19,7 +24,33 @@ export interface DatasetProps {
     checked: false;
 }
 
-export interface InferenceStudyProps {
+export interface StudyProps {
+    pk: number;
+    name: string;
+    status: string;
+    description: string;
+    timestamp: string;
+    tasks: TaskProps[];
+    checked: false;
+}
+
+export interface StudyRequestProps {
+    name: string;
+    description: string;
+    tasks: number[];
+}
+
+export type StudyResponse = 
+    | (Omit<Response, "json"> & {
+        status: 201;
+        json: () => StudyProps | PromiseLike<StudyProps>;
+    })
+    | (Omit<Response, "json"> & {
+        status: 400;
+        json: () => BadRequest | PromiseLike<BadRequest>;
+    })
+
+export interface TaskProps {
     pk: number;
     algorithm_instance: number;
     dataset: string;
@@ -28,9 +59,12 @@ export interface InferenceStudyProps {
     min_study_edge_weight: number;
     avg_study_edge_weight: number;
     std_study_edge_weight: number;
-    checked: false;
     name: string;
+    study: number;
+    status: string;
+    checked: false;
 }
+
 
 export interface AlgorithmProps {
     pk: number;

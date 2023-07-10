@@ -31,40 +31,53 @@ import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { revalidate } from "@/actions/revalidate"
 import { DialogClose } from "@radix-ui/react-dialog"
+import { useRouter } from 'next/navigation';
+import { postStudy } from "@/actions/post"
+import { StudyProps } from "@/const"
 
-const AddDatasetFormSchema = z.object({
-  zenodoId: z.string().nonempty(),
+
+const AddStudyFormSchema = z.object({
+  name: z.string().nonempty(),
+  description: z.string().nonempty(),
 })
 
-export function DatasetForm() {
+export function StudyForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const { data: session, status, update } = useSession();
+  const { push } = useRouter()
 
-  const form = useForm<z.infer<typeof AddDatasetFormSchema>>({
-    resolver: zodResolver(AddDatasetFormSchema),
+  const form = useForm<z.infer<typeof AddStudyFormSchema>>({
+    resolver: zodResolver(AddStudyFormSchema),
     defaultValues: {
-        zenodoId: "",
+        name: "",
+        description: "",
     }
   })
 
-  function onSubmit(data: z.infer<typeof AddDatasetFormSchema>) {
+  async function onSubmit(data: z.infer<typeof AddStudyFormSchema>) {
     setIsLoading(true);
     update();
-    const response = fetch(getGenniferUrl() + 'datasets/', {
+    const response = await fetch(getGenniferUrl() + 'studies/', {
         headers: { 
           "Content-Type": "application/json",
           "Authorization": "Bearer " + session?.user.access_token,
         },
         body: JSON.stringify({
-            zenodo_id: data.zenodoId,
+            name: data.name,
+            description: data.description,
+            tasks: [],
         }),
         method: "POST",
     }).then((resp) => resp.json());
-    revalidate('datasets');
+    console.log(response);
+    revalidate('studies');
     setIsLoading(false);
     setOpen(false);
+    if (!response.hasOwnProperty('error')) {
+       push('/studies/' + response.pk);
     }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -73,26 +86,42 @@ export function DatasetForm() {
         variant="outline"
         size="sm"
         >
-        Add Dataset
+        Add Study
         </Button>
     </DialogTrigger>
     <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-        <DialogTitle>Add Dataset</DialogTitle>
+        <DialogTitle>Create Study</DialogTitle>
         </DialogHeader>
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
         <FormField
           control={form.control}
-          name="zenodoId"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Zenodo ID</FormLabel>
+              <FormLabel>Study Name</FormLabel>
               <FormControl>
-                <Input placeholder="Your Zenodo ID..." {...field} />
+                <Input placeholder="Your Study Name..." {...field} />
               </FormControl>
               <FormDescription>
-                This is the ID of the dataset you want to add.
+                This is the name of your study.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Study Description</FormLabel>
+              <FormControl>
+                <Input placeholder="A description of your study..." {...field} />
+              </FormControl>
+              <FormDescription>
+                This is a description of your study.
               </FormDescription>
               <FormMessage />
             </FormItem>

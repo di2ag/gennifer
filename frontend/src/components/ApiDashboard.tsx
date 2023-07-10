@@ -28,11 +28,25 @@ const ApiDashboard = async () => {
   if (!user) return notFound()
   
   // Fetch datasets from API
-  const datasets = await fetch(getGenniferUrl() + 'datasets', { next: { revalidate: 1000 }})
+  const datasets = await fetch(getGenniferUrl() + 'datasets/', { 
+    next: { 
+      revalidate: 1000,
+      tags: ['datasets'],
+     },
+    headers: {
+      Authorization: 'Bearer ' + user.user.access_token, 
+  }})
   .then((resp) => resp.json());
 
   // Fetch Studies from API
-  const studies = await fetch(getGenniferUrl() + 'inference_studies', { next: { revalidate: 1000 }})
+  const studies = await fetch(getGenniferUrl() + 'studies/', { 
+    next: { 
+      revalidate: 1000,
+      tags: ['studies'],
+     },
+    headers: {
+      Authorization: 'Bearer ' + user.user.access_token, 
+  }})
   .then((resp) => resp.json());
 
   return (
@@ -56,7 +70,7 @@ const ApiDashboard = async () => {
       <DataTable 
         columns={studyColumns}
         data={studies} 
-        doButtonText="New Study" 
+        doButtonText="Create Study" 
         searchPlaceholderText="Filter studies..."
         searchValue="name"/>
       </div>

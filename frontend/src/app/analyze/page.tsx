@@ -2,6 +2,7 @@ import CytoscapeDashboard from "@/components/CytoscapeDashboard";
 import { authOptions } from "@/lib/auth";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -27,14 +28,18 @@ function getGenniferUrl() {
 
 const page = async () => {
   const user = await getServerSession(authOptions)
+  if (!user) return notFound()
   const analysisId = generateNewAnalysisId();
     //console.log(user)
     // Get the analysis session or create a new one
-    const analysisSession = await fetch(getGenniferUrl() + 'analyses/' + analysisId, {
-        headers: { Authorization: `Bearer ${user?.user.access}` },
-    } )
+    const analysisSession = await fetch(getGenniferUrl() + 'analyses/' + analysisId, { 
+      next: { 
+        revalidate: 1000,
+      },
+      headers: {
+      Authorization: 'Bearer ' + user.user.access_token, 
+    }})
     .then((resp) => resp.json());
-
   return (
     <div className="max-w-7xl mx-0 mt-0">
         <CytoscapeDashboard 
