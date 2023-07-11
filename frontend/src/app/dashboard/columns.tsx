@@ -12,6 +12,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
+import { getGenniferUrl } from "@/lib/utils"
+import { useSession } from "next-auth/react"
+import { method } from "lodash"
+import { revalidate } from "@/actions/revalidate"
 
 
 export type Dataset = {
@@ -23,13 +27,12 @@ export type Dataset = {
 }
 
 export type Study = {
-    pk: string;
+    pk: number;
     name: string;
     dataset: string;
     algorithm_instance: string;
     status: string;
 }
-
 
 export const datasetColumns: ColumnDef<Dataset>[] = [
   {
@@ -167,6 +170,20 @@ export const studyColumns: ColumnDef<Study>[] = [
     {
       id: "actions",
       cell: ({ row }) => {
+        const { data: session, status, update } = useSession();
+        update();
+
+        const handleDeleteStudy = async (studyId: number) => {
+          await fetch(getGenniferUrl() + 'studies/' + studyId, {
+              headers: {
+                  "Authorization": "Bearer " + session?.user.access_token,
+              },
+              method: "DELETE",
+            });
+          
+          revalidate('studies');
+          console.log("Deleted Bitch");
+        }
       const study = row.original
   
       return (
@@ -180,12 +197,12 @@ export const studyColumns: ColumnDef<Study>[] = [
           <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(study.pk)}
+              onClick={() => navigator.clipboard.writeText(study.pk.toString())}
               >
               Copy Study ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Delete study</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDeleteStudy(study.pk)}>Delete study</DropdownMenuItem>
           </DropdownMenuContent>
           </DropdownMenu>
       )
