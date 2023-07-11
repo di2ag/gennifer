@@ -1,9 +1,5 @@
-
 import Paragraph from "@/ui/Paragraph";
-//import { AlgorithmTable, Algorithm } from "./table"
 import LargeHeading from '@/ui/LargeHeading';
-
-
 
 export default async function Home() {
   
@@ -21,12 +17,4 @@ export default async function Home() {
       </div>
     </div>
     )
-
-  // return (
-  //     <main className="min-h-screen">
-  //       <Navbar />
-  //       <h2>Available Algorithms</h2>
-  //       <AlgorithmTable algos={data} />
-  //     </main>
-  // )
 }

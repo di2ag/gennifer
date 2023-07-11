@@ -6,7 +6,6 @@ type AccessToken = string;
 
 declare module 'next-auth/jwt' {
     interface JWT {
-        // id: UserId;
         refresh_token: string;
         access_token: string;
         expires_in: number;
@@ -22,9 +21,6 @@ declare module 'next-auth/jwt' {
         first_name?: string;
         last_name?: string;
         error?: "RefreshAccessTokenError";
-        
-        // user_id: number;
-        //accessToken: AccessToken;
     }
 }
 
@@ -32,11 +28,6 @@ declare module 'next-auth'{
     interface Session {
         user: User
         error?: "RefreshAccessTokenError"
-        // refreshTokenExpires?: number;
-        // accessTokenExpires?: number;
-        // refreshToken?: string;
-        // accessToken?: string;
-        // error?: string;
     }
 
     interface User {

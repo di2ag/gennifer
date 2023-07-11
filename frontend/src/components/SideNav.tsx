@@ -5,15 +5,6 @@ import { SideNavProps } from "@/const";
 import { Separator } from "@/ui/separator";
 import { FC } from 'react';
 
-function getGenniferUrl() {
-    const url = process.env.GENNIFER_BASE_URL
-    if (!url || url.length === 0) {
-        throw new Error("Missing GenNIFER URL.");
-    }
-    return url;
-  }
-
-
 const SideNav: FC<SideNavProps> = ({ 
 	items,
 	setCytoscapeRequest,

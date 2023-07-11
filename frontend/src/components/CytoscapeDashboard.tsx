@@ -2,21 +2,15 @@ import { cookies } from 'next/headers'
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
-import { FC } from 'react';
-import SideNav from '@/components/SideNav';
 import { datasetFilterColumns, geneFilterColumns, algorithmFilterColumns, studyFilterColumns } from '@/app/explore/columns';
 import { BiDna } from "react-icons/bi";
 import { FiDatabase } from "react-icons/fi";
 import {BsCodeSquare} from "react-icons/bs";
 import { HiTemplate } from "react-icons/hi";
 import { SideNavButtonItemProps } from '@/const';
-import LargeHeading from './ui/LargeHeading';
-import Paragraph from './ui/Paragraph';
 import CytoscapeClient from '@/components/CytoscapeClient';
 import { getGenniferUrl } from '@/lib/utils';
 
-interface CytoscapeDashboardProps {
-}
 
 const CytoscapeDashboard = async () => {
   const user = await getServerSession(authOptions)

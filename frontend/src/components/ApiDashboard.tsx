@@ -3,25 +3,10 @@ import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import LargeHeading from "./ui/LargeHeading";
 import Paragraph from "./ui/Paragraph";
-// import DatasetsTable from "@/components/ui/tables/DatasetsTable";
-import StudiesTable from "./ui/tables/StudiesTable";
 import { DataTable } from "@/ui/DataTable";
 import { datasetColumns, studyColumns } from "@/app/dashboard/columns";
 import { Separator } from "@/components/ui/separator"
-
-
-
-interface ApiDashboardProps {
-  
-}
-
-function getGenniferUrl() {
-  const url = process.env.GENNIFER_BASE_URL
-  if (!url || url.length === 0) {
-      throw new Error("Missing GenNIFER URL.");
-  }
-  return url;
-}
+import { getGenniferUrl } from "@/lib/utils";
 
 const ApiDashboard = async () => {
   const user = await getServerSession(authOptions)

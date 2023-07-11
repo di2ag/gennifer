@@ -22,8 +22,6 @@ export type Task = {
   status: string;
 }
 
-
-
 export const taskColumns: ColumnDef<TaskProps>[] = [
   {
     accessorKey: "name",

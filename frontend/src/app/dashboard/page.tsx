@@ -9,8 +9,6 @@ export const metadata: Metadata = {
     description: 'Dashboard for GenNIFER of the project.'
 }
 
-
-
 const page = async () => {
   return (
     <div className='max-w-7xl mx-auto mt-16'>

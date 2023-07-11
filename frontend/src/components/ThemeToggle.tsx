@@ -1,14 +1,12 @@
 'use client'
 
 import { useTheme } from 'next-themes';
-import { FC } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/DropdownMenu';
 import Button from '@/ui/Button';
 import { Icons } from '@/ui/Icons';
 
 
 const ThemeToggle = () => {
-
     const {setTheme} = useTheme();
     
   return (

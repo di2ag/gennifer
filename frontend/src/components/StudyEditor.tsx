@@ -1,13 +1,11 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
-import LargeHeading from "./ui/LargeHeading";
-import Paragraph from "./ui/Paragraph";
-import { DataTable } from "@/ui/DataTable";
+import LargeHeading from "@/components/ui/LargeHeading";
+import Paragraph from "@/components/ui/Paragraph";
+import { DataTable } from "@/components/ui/DataTable";
 import { taskColumns } from "@/app/studies/columns";
-import { Separator } from "@/components/ui/separator"
 import { AlgorithmProps, DatasetProps, StudyProps, TaskProps } from "@/const";
-import { getGenniferUrl } from "@/lib/utils";
 
 interface StudyEditorProps {
     study: StudyProps;

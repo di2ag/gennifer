@@ -11,12 +11,11 @@ export const metadata: Metadata = {
     description: 'Documentation for GenNIFER of the project.'
 }
 
-const page: FC = ({  }) => {
+const page: FC = () => {
   return <div className='container max-w-7xl mx-auto mt-12'>
     <div className='flex flex-col items-center gap-6'>
         <LargeHeading>Querying the API</LargeHeading>
         <Paragraph>/query</Paragraph>
-
         <DocumentationTabs />
     </div>
   </div>

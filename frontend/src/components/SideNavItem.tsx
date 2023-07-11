@@ -3,7 +3,6 @@
 import * as React from "react"
 import { cva } from 'class-variance-authority';
 import Button from '@/ui/Button';
-
 import {
     Sheet,
     SheetClose,
@@ -15,8 +14,7 @@ import {
     SheetTrigger,
   } from "@/components/ui/sheet"
 import { FilterTable } from './ui/FilterTable';
-import { CytoscapeRequestProps, SideNavItemProps } from '@/const';
-import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
+import { SideNavItemProps } from '@/const';
 
 
 const SideNavItemVariants = cva(
@@ -43,10 +41,6 @@ const SideNavItemVariants = cva(
 );
 
 const SideNavItem = ({ children, width, size, text, data, columns, searchValue, setCytoscapeRequest, cachedResults }: SideNavItemProps) => {
-    // const [sorting, setSorting] = React.useState<SortingState>([])
-    // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    //     []
-    // )
     const [rowSelection, setRowSelection] = React.useState({})
     
     const handleSaveClick = () => {
@@ -90,10 +84,6 @@ const SideNavItem = ({ children, width, size, text, data, columns, searchValue, 
         data={data} 
         searchPlaceholderText={`Search ${text}...`}
         searchValue={searchValue}
-        // sorting={sorting}
-        // setSorting={setSorting}
-        // columnFilters={columnFilters}
-        // setColumnFilters={setColumnFilters}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}
         />

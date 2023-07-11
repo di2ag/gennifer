@@ -97,7 +97,6 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
                 </div>
                 :
                 <div ref={cytoScreenRef} className='min-h-screen flex-grow'> 
-                {/* <p>Here is some stuff.</p> */}
                 <CytoscapeGraph 
                     elements={cytoResponse.elements}
                     result_ids={cytoResponse.result_ids}
@@ -109,5 +108,5 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
     </div>
     )
 }
-       /// {/* <SideNav items={items}/> */}
+
 export default CytoscapeClient;

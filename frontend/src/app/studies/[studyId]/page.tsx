@@ -1,6 +1,5 @@
 
 import StudyEditor from "@/components/StudyEditor";
-import { StudyProps } from "@/const";
 import { authOptions } from "@/lib/auth";
 import { getGenniferUrl } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -17,7 +16,6 @@ interface pageProps {
     studyId: number;
   }
 }
-
 
 const page = async ({ params }: pageProps) => {
     const user = await getServerSession(authOptions)
