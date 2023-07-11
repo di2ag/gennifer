@@ -77,11 +77,13 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
         },
         body: JSON.stringify({
             algorithm: parseInt(data.algorithm),
-            hyperparameters: {},
         }),
         method: "POST",
     }).then((resp) => resp.json());
     console.log(responseAlgorithm);
+    //
+    // Handling of hyperparameters CRUD goes here.
+    //
     const response = await fetch(getGenniferUrl() + 'tasks/', {
         headers: { 
           "Content-Type": "application/json",

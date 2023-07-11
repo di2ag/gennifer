@@ -47,7 +47,6 @@ const page = async ({ params }: pageProps) => {
       return taskData
     }));
   study.tasks = tasks
-  //console.log(study.tasks);
 
   return (
      <div className='max-w-7xl mx-auto mt-16'>

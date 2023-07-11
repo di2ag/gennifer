@@ -24,26 +24,23 @@ function getGenniferUrl() {
   return url;
 }
 
-
-
 const page = async () => {
   const user = await getServerSession(authOptions)
   if (!user) return notFound()
-  const analysisId = generateNewAnalysisId();
-    //console.log(user)
-    // Get the analysis session or create a new one
-    const analysisSession = await fetch(getGenniferUrl() + 'analyses/' + analysisId, { 
-      next: { 
-        revalidate: 1000,
-      },
-      headers: {
-      Authorization: 'Bearer ' + user.user.access_token, 
-    }})
-    .then((resp) => resp.json());
+  // const analysisId = generateNewAnalysisId();
+  //   //console.log(user)
+  //   // Get the analysis session or create a new one
+  //   const analysisSession = await fetch(getGenniferUrl() + 'analyses/' + analysisId, { 
+  //     next: { 
+  //       revalidate: 1000,
+  //     },
+  //     headers: {
+  //     Authorization: 'Bearer ' + user.user.access_token, 
+  //   }})
+  //   .then((resp) => resp.json());
   return (
-    <div className="max-w-7xl mx-0 mt-0">
-        <CytoscapeDashboard 
-        analysisId={analysisId}/>
+    <div className="w-full mx-0 mt-0">
+        <CytoscapeDashboard />
     </div>
   )
 }

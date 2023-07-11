@@ -65,7 +65,6 @@ export interface TaskProps {
     checked: false;
 }
 
-
 export interface AlgorithmProps {
     pk: number;
     name: string;
@@ -84,7 +83,8 @@ export interface SideNavItemProps {
     data: any;
     columns: any;
     searchValue: string;
-
+    setCytoscapeRequest: React.Dispatch<SetStateAction<CytoscapeRequestProps>>
+    cachedResults: number[];
 }
 
 export interface SideNavButtonItemProps {
@@ -97,4 +97,19 @@ export interface SideNavButtonItemProps {
 
 export interface SideNavProps {
 	items: SideNavButtonItemProps[];
+    setCytoscapeRequest: React.Dispatch<SetStateAction<CytoscapeRequestProps>>
+    cachedResults: number[];
+}
+
+export interface CytoscapeRequestProps {
+    gene_ids: number[];
+    task_ids: number[];
+    algorithm_ids: number[];
+    dataset_ids: number[];
+    cached_results: number[];
+}
+
+export interface CytoscapeResponseProps {
+    elements: any[];
+    result_ids: number[];
 }

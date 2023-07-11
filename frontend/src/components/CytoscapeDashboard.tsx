@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 import SideNav from '@/components/SideNav';
-import { datasetFilterColumns, geneFilterColumns, algorithmFilterColumns, studyFilterColumns } from '@/app/analyze/columns';
+import { datasetFilterColumns, geneFilterColumns, algorithmFilterColumns, studyFilterColumns } from '@/app/explore/columns';
 import { BiDna } from "react-icons/bi";
 import { FiDatabase } from "react-icons/fi";
 import {BsCodeSquare} from "react-icons/bs";
@@ -13,27 +13,19 @@ import { SideNavButtonItemProps } from '@/const';
 import LargeHeading from './ui/LargeHeading';
 import Paragraph from './ui/Paragraph';
 import CytoscapeClient from '@/components/CytoscapeClient';
+import { getGenniferUrl } from '@/lib/utils';
 
 interface CytoscapeDashboardProps {
-  analysisId: string;
 }
 
-function getGenniferUrl() {
-    const url = process.env.GENNIFER_BASE_URL
-    if (!url || url.length === 0) {
-        throw new Error("Missing GenNIFER URL.");
-    }
-    return url;
-  }
-
-const CytoscapeDashboard = async ({ analysisId }: CytoscapeDashboardProps) => {
+const CytoscapeDashboard = async () => {
   const user = await getServerSession(authOptions)
   if (!user) return notFound()
 
     // Fetch genes from API
     const genes = await fetch(getGenniferUrl() + 'genes/', { 
       next: { 
-        revalidate: 1000,
+        //revalidate: 1000,
         tags: ['genes'],
       },
       headers: {
@@ -44,7 +36,7 @@ const CytoscapeDashboard = async ({ analysisId }: CytoscapeDashboardProps) => {
     // Fetch datasets from API
     const datasets = await fetch(getGenniferUrl() + 'datasets/', { 
       next: { 
-        revalidate: 1000,
+        //revalidate: 1000,
         tags: ['datasets'],
       },
       headers: {
@@ -55,7 +47,7 @@ const CytoscapeDashboard = async ({ analysisId }: CytoscapeDashboardProps) => {
     // Fetch Studies from API
     const studies = await fetch(getGenniferUrl() + 'studies/', { 
       next: { 
-        revalidate: 1000,
+        //revalidate: 1000,
         tags: ['studies'],
       },
       headers: {
@@ -66,8 +58,8 @@ const CytoscapeDashboard = async ({ analysisId }: CytoscapeDashboardProps) => {
     // Fetch Algorithms from API
     const algorithms = await fetch(getGenniferUrl() + 'algorithms/', { 
       next: { 
-        revalidate: 1000,
-        tags: ['studies'],
+        //revalidate: 1000,
+        tags: ['algorithms'],
       },
       headers: {
       Authorization: 'Bearer ' + user.user.access_token, 
@@ -104,21 +96,12 @@ const CytoscapeDashboard = async ({ analysisId }: CytoscapeDashboardProps) => {
           searchValue: "name",
       },
   ];
-  
-  console.log(analysisId);
 
   return (
-    <div className="grid min-h-screen grid-cols-[auto_1fr] justify-center gap-4 overflow-hidden">
+    <div className="grid">
         <CytoscapeClient
         items={items}
         />
-        {/* <aside className='container flex h-[calc(100vh_-_2rem)] w-20'>
-        <SideNav
-        items={items} />
-        </aside>
-        <div className="">
-          <p className="text-2xl text-gray-400 dark:text-gray-500">This is some text</p>
-        </div> */}
       </div>
   )
 }

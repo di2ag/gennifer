@@ -39,6 +39,9 @@ import { StudyForm } from "../AddStudyForm"
 import { Dataset } from "@/app/dashboard/columns"
 import { AlgorithmProps, DatasetProps } from "@/const"
 import { TaskForm } from "../AddTaskForm"
+import { signIn, useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import RunStudyButton from "../RunStudyButton"
  
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -61,6 +64,14 @@ export function DataTable<TData, TValue>({
   algorithms,
   datasets,
 }: DataTableProps<TData, TValue>) {
+  const { data: session } = useSession();
+
+  React.useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn(); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -154,7 +165,9 @@ export function DataTable<TData, TValue>({
         doButtonText === 'Add Task' && 
           <div className="flex items-center justify-start space-x-2 py-4">
             {
-            TaskForm({studyId: studyId!, algorithms: algorithms!, datasets: datasets!})}
+            TaskForm({studyId: studyId!, algorithms: algorithms!, datasets: datasets!})
+            }
+            <RunStudyButton studyId={studyId!}/>
           </div>
         }          
         <div className="flex items-center justify-end space-x-2 py-4">

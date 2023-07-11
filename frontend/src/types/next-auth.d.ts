@@ -21,6 +21,8 @@ declare module 'next-auth/jwt' {
         username: string;
         first_name?: string;
         last_name?: string;
+        error?: "RefreshAccessTokenError";
+        
         // user_id: number;
         //accessToken: AccessToken;
     }
@@ -28,7 +30,8 @@ declare module 'next-auth/jwt' {
 
 declare module 'next-auth'{
     interface Session {
-        user: User,
+        user: User
+        error?: "RefreshAccessTokenError"
         // refreshTokenExpires?: number;
         // accessTokenExpires?: number;
         // refreshToken?: string;

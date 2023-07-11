@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
-import { AlgorithmProps, DatasetProps, GeneProps, InferenceStudyProps } from "@/const"
+import { AlgorithmProps, DatasetProps, GeneProps, StudyProps } from "@/const"
 
 
 // export type DatasetFilter = {
@@ -93,7 +93,7 @@ export const datasetFilterColumns: ColumnDef<DatasetProps>[] = [
   },
 ]
 
-export const studyFilterColumns: ColumnDef<InferenceStudyProps>[] = [
+export const studyFilterColumns: ColumnDef<StudyProps>[] = [
     {
         id: "select",
         header: ({ table }) => (

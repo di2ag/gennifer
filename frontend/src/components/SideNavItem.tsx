@@ -6,14 +6,16 @@ import Button from '@/ui/Button';
 
 import {
     Sheet,
+    SheetClose,
     SheetContent,
     SheetDescription,
+    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet"
 import { FilterTable } from './ui/FilterTable';
-import { SideNavItemProps } from '@/const';
+import { CytoscapeRequestProps, SideNavItemProps } from '@/const';
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 
 
@@ -40,12 +42,31 @@ const SideNavItemVariants = cva(
 	},
 );
 
-const SideNavItem = ({ children, width, size, text, data, columns, searchValue }: SideNavItemProps) => {
+const SideNavItem = ({ children, width, size, text, data, columns, searchValue, setCytoscapeRequest, cachedResults }: SideNavItemProps) => {
     // const [sorting, setSorting] = React.useState<SortingState>([])
     // const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     //     []
     // )
     const [rowSelection, setRowSelection] = React.useState({})
+    
+    const handleSaveClick = () => {
+        const selected = Object.entries(rowSelection).map(([key, value]) => data[key].pk)
+        let key:string = ''
+        if (text.toLowerCase() === 'genes') {
+            key = 'gene_ids'
+        } else if (text.toLowerCase() === 'studies') {
+            key = 'task_ids'
+        } else if (text.toLowerCase() === 'algorithms') {
+            key = 'algorithm_ids'
+        } else if (text.toLowerCase() === 'datasets') {
+            key = 'dataset_ids'
+        }
+        setCytoscapeRequest((prevRequest) => ({
+            ...prevRequest,
+            [key]: selected,
+            cached_results: cachedResults,
+        }));
+    }
 
     return (
 	<Sheet>
@@ -77,6 +98,18 @@ const SideNavItem = ({ children, width, size, text, data, columns, searchValue }
         setRowSelection={setRowSelection}
         />
         </div>
+        <SheetFooter>
+            <SheetClose asChild>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSaveClick}
+                    type="submit"
+                    >
+                    Save changes
+                </Button>
+            </SheetClose>
+        </SheetFooter>
     </SheetContent>
     </Sheet>
     );

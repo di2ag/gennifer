@@ -1,7 +1,7 @@
 'use client'
 
 import SideNavItem from "@/components/SideNavItem";
-import { SideNavButtonItemProps } from "@/const";
+import { SideNavProps } from "@/const";
 import { Separator } from "@/ui/separator";
 import { FC } from 'react';
 
@@ -14,12 +14,10 @@ function getGenniferUrl() {
   }
 
 
-interface SideNavProps {
-	items: SideNavButtonItemProps[];
-}
-
-const SideNav: FC<SideNavProps> = async ({ 
+const SideNav: FC<SideNavProps> = ({ 
 	items,
+	setCytoscapeRequest,
+	cachedResults,
  }) => {
 
   return (
@@ -43,7 +41,9 @@ const SideNav: FC<SideNavProps> = async ({
 						text={text}
 						data={data} 
 						columns={columns} 
-						searchValue={searchValue}>
+						searchValue={searchValue}
+						setCytoscapeRequest={setCytoscapeRequest}
+						cachedResults={cachedResults}>
 							{icon}
 							<div className="hidden xl:inline-flex flex-none text-md font-semibold ">
 								{text}
