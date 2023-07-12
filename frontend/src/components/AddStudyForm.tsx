@@ -34,6 +34,7 @@ import { DialogClose } from "@radix-ui/react-dialog"
 import { useRouter } from 'next/navigation';
 import { postStudy } from "@/actions/post"
 import { StudyProps } from "@/const"
+import { Textarea } from "@/ui/textarea"
 
 
 const AddStudyFormSchema = z.object({
@@ -89,12 +90,12 @@ export function StudyForm() {
         Add Study
         </Button>
     </DialogTrigger>
-    <DialogContent className="sm:max-w-[425px]">
+    <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
         <DialogTitle>Create Study</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -118,7 +119,9 @@ export function StudyForm() {
             <FormItem>
               <FormLabel>Study Description</FormLabel>
               <FormControl>
-                <Input placeholder="A description of your study..." {...field} />
+                <div className="items-center w-full gap-1.5">
+                  <Textarea placeholder="A description of your study..." {...field} />
+                </div>
               </FormControl>
               <FormDescription>
                 This is a description of your study.

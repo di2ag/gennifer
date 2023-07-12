@@ -35,7 +35,6 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
 
     useEffect(() => {
         // Fetch results from graph endpoint
-        console.log(cytoRequest)
         const fetchResults = async () => {
         try {
             update()
@@ -46,15 +45,15 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
                     'Authorization': 'Bearer ' + session?.user.access_token,
                 },
                 body: JSON.stringify(cytoRequest),
-            })
-            const data = await response.json()
+            }).then((resp) => resp.json());
+            // const data = await response.json()
             setCytoResponse((prevResponse) => {
                 try {
                 const mergedResults = new Set(prevResponse.result_ids)
-                data.result_ids.forEach((id:number) => mergedResults.add(id))
+                response.result_ids.forEach((id:number) => mergedResults.add(id))
                 return ({
                 ...prevResponse,
-                elements: [...prevResponse.elements, ...data.elements],
+                elements: [...prevResponse.elements, ...response.elements],
                 result_ids: Array.from(mergedResults),
                 })
             } catch (error) {
@@ -88,22 +87,22 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
                 />
         </div>
         <div className='min-h-screen ml-40 w-full flex items-center justify-center'>
-            { cytoResponse.elements.length == 0 ?
-                <div className='flex flex-col gap-6 items-center justify-center'>
-                    <LargeHeading>Select Filters to Begin</LargeHeading>
-                    <div className='text-center mt-4 -mb-4 space-y-1'>
-                    <Paragraph>To start seeing results population, you should select at least two genes plus a study or an algorithm and a dataset.</Paragraph>
-                    </div>
-                </div>
-                :
-                <div ref={cytoScreenRef} className='min-h-screen flex-grow'> 
+            <div className='relative min-h-screen flex-grow'>
+            <div ref={cytoScreenRef} className='absolute inset-0'> 
                 <CytoscapeGraph 
                     elements={cytoResponse.elements}
                     result_ids={cytoResponse.result_ids}
                     windowHeight={height}
-                    windowWidth={width}/>
+                    windowWidth={width}
+                    active={cytoResponse.elements.length > 0}/>
+            </div>
+            <div className={`absolute inset-0 flex flex-col gap-6 items-center justify-center ${cytoResponse.elements.length > 0 ? 'hidden' : ''}`}>
+                <LargeHeading>Select Filters to Begin</LargeHeading>
+                <div className='text-center mt-4 -mb-4 space-y-1'>
+                <Paragraph>To start seeing results population, you should select at least two genes plus a study or an algorithm and a dataset.</Paragraph>
                 </div>
-            }
+            </div>
+            </div>
         </div>
     </div>
     )

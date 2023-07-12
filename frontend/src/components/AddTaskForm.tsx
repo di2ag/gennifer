@@ -117,7 +117,7 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
         <DialogTitle>Create Study</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
         <FormField
           control={form.control}
           name="algorithm"
@@ -130,9 +130,9 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
                         <SelectValue placeholder="Select an algorithm." />
                     </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="bg-white">
                         {algorithms.map((algorithm) => (
-                            <SelectItem value={algorithm.pk.toString()}>{algorithm.name}</SelectItem>
+                            <SelectItem className="hover:bg-slate-100" value={algorithm.pk.toString()}>{algorithm.name}</SelectItem>
                         ))}
                 </SelectContent>
               </Select>
@@ -152,9 +152,9 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
                         <SelectValue placeholder="Select a dataset." />
                     </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className="bg-white">
                         {datasets.map((dataset) => (
-                            <SelectItem value={dataset.zenodo_id}>{dataset.title + ':' + dataset.zenodo_id}</SelectItem>
+                            <SelectItem className="hover:bg-slate-100" value={dataset.zenodo_id}>{dataset.title + ': ' + dataset.zenodo_id}</SelectItem>
                         ))}
                 </SelectContent>
               </Select>

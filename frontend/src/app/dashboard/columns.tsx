@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
-import { getGenniferUrl } from "@/lib/utils"
+import { formatDate, getGenniferUrl } from "@/lib/utils"
 import { useSession } from "next-auth/react"
 import { method } from "lodash"
 import { revalidate } from "@/actions/revalidate"
@@ -29,9 +29,10 @@ export type Dataset = {
 export type Study = {
     pk: number;
     name: string;
-    dataset: string;
-    algorithm_instance: string;
+    description: string;
+    tasks: number[];
     status: string;
+    timestamp: string;
 }
 
 export const datasetColumns: ColumnDef<Dataset>[] = [
@@ -126,32 +127,18 @@ export const studyColumns: ColumnDef<Study>[] = [
         },
     },
     {
-      accessorKey: "dataset",
-      header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              Dataset Zenodo ID
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
+      accessorKey: "description",
+      header: "Description",
     },
     {
-      accessorKey: "algorithm_instance",
-      header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              Algorithm Instance
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          )
-        },
+      accessorKey: "tasks",
+      header: "# Tasks",
+      cell: ({ row }) => {
+        const study = row.original
+        return (
+          <span>{study.tasks.length}</span>
+        )
+      }
     },
     {
         accessorKey: "status",
@@ -167,6 +154,17 @@ export const studyColumns: ColumnDef<Study>[] = [
             )
           },
       },
+      {
+        accessorKey: "timestamp",
+        header: "Created on",
+        cell: ({ row }) => {
+          const study = row.original
+          return (
+            <span>{formatDate(study.timestamp)}</span>
+          )
+        }
+        
+    },
     {
       id: "actions",
       cell: ({ row }) => {

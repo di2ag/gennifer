@@ -38,7 +38,8 @@ const ApiDashboard = async () => {
     <div className='container flex flex-col gap-6'>
       <LargeHeading>Welcome, {user.user?.first_name}</LargeHeading>
       <div className='text-center md:text-left mt-4 -mb-4 space-y-1'>
-        <Paragraph className="text-center md:text-left">This is your dashboard where you can organize all your studies, datasets, and experiments. For analysis, please click on the analysis tab above.</Paragraph>
+        <Paragraph className="max-w-screen-lg text-center md:text-left">This is your dashboard where you can organize all your studies, datasets, and experiments. 
+        To explore your results, please click on the explore tab above. To evaluate a study or algorithm, please click on the evaluate tab.</Paragraph>
       </div>
       <Separator className="border-slate-100"/>
       <div>
