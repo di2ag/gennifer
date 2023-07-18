@@ -1,0 +1,16 @@
+version: '3.6'
+
+services:
+  gennifer:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+        - NEXTAUTH_SECRET=X/NTPIqf088gXiYFi7WF0iH3NRJRPE3nZ0oOkRXf5es=
+        - NEXTAUTH_URL=http://localhost:3000
+        - CREDENTIALS_URL=https://chp.thayer.dartmouth.edu/o/token/
+        - GENNIFER_CLIENT_ID=jHM4ETk5wi2WUVPElpMFJtZqwY2oBKHVMmTsY9ry
+        - GENNIFER_CLIENT_SECRET=hY0XfS8YLGMojWuvUOPga4sJpEO9isltF7Xk7wXjyFHwWmxkifRXcPbnmhUM0oVO4Zlz349jbtBePIlaafkWubReqEBCoIcCzaZLa2a9pIlq55yow2TBvMDHnImrXvig
+        - GENNIFER_USER_DETAILS_URL=https://chp.thayer.dartmouth.edu/users/me/
+        - GENNIFER_BASE_URL=https://chp.thayer.dartmouth.edu/gennifer/api/
+        - NEXT_PUBLIC_GENNIFER_BASE_URL=https://chp.thayer.dartmouth.edu/gennifer/api/

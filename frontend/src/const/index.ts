@@ -103,7 +103,7 @@ export interface SideNavProps {
 
 export interface CytoscapeRequestProps {
     gene_ids: number[];
-    task_ids: number[];
+    study_ids: number[];
     algorithm_ids: number[];
     dataset_ids: number[];
     cached_results: number[];

@@ -80,7 +80,7 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
         }),
         method: "POST",
     }).then((resp) => resp.json());
-    console.log(responseAlgorithm);
+    // console.log(responseAlgorithm);
     //
     // Handling of hyperparameters CRUD goes here.
     //
@@ -96,7 +96,7 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
         }),
         method: "POST",
     }).then((resp) => resp.json());
-    console.log(response);
+    // console.log(response);
     revalidate('study'+ studyId);
     setIsLoading(false);
     setOpen(false);
@@ -131,8 +131,8 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
                     </SelectTrigger>
                 </FormControl>
                 <SelectContent className="bg-white">
-                        {algorithms.map((algorithm) => (
-                            <SelectItem className="hover:bg-slate-100" value={algorithm.pk.toString()}>{algorithm.name}</SelectItem>
+                        {algorithms.map(algorithm => (
+                            <SelectItem key={'algorithm-'+ algorithm.pk} className="hover:bg-slate-100" value={algorithm.pk.toString()}>{algorithm.name}</SelectItem>
                         ))}
                 </SelectContent>
               </Select>
@@ -153,8 +153,8 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
                     </SelectTrigger>
                 </FormControl>
                 <SelectContent className="bg-white">
-                        {datasets.map((dataset) => (
-                            <SelectItem className="hover:bg-slate-100" value={dataset.zenodo_id}>{dataset.title + ': ' + dataset.zenodo_id}</SelectItem>
+                        {datasets.map(dataset => (
+                            <SelectItem key={'dataset-'+ dataset.pk} className="hover:bg-slate-100" value={dataset.zenodo_id}>{dataset.title + ': ' + dataset.zenodo_id}</SelectItem>
                         ))}
                 </SelectContent>
               </Select>

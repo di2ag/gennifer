@@ -1,6 +1,7 @@
 
 import StudyEditor from "@/components/StudyEditor";
 import { authOptions } from "@/lib/auth";
+import { AuthWrapper } from "@/lib/authClientWrapper";
 import { getGenniferUrl } from "@/lib/utils";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";

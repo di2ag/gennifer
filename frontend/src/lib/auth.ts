@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import jwt_decode from "jwt-decode"
 import { collapseClasses } from "@mui/material";
 import { url } from "inspector";
+import { signOut } from "next-auth/react";
 
 function getGoogleCredentials() {
     const clientId = process.env.GOOGLE_CLIENT_ID
@@ -120,7 +121,7 @@ export const authOptions: NextAuthOptions = {
                 //console.log(token.exp - Date.now()/1000);
                 return token
             } else {
-                // console.log("token no");
+                //console.log("token no");
                 try {
                     var urlencoded = new URLSearchParams();
                     urlencoded.append("grant_type", "refresh_token");
@@ -170,8 +171,10 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
  
-        redirect() {
-            return '/dashboard'
+        async redirect({ url, baseUrl}) {
+            if (url.startsWith("/")) return `${baseUrl}${url}`
+            else if (new URL(url).origin === baseUrl) return url
+            return baseUrl
         }
     },
 }

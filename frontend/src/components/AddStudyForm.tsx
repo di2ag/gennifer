@@ -71,7 +71,7 @@ export function StudyForm() {
         }),
         method: "POST",
     }).then((resp) => resp.json());
-    console.log(response);
+    // console.log(response);
     revalidate('studies');
     setIsLoading(false);
     setOpen(false);

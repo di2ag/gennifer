@@ -24,6 +24,7 @@ import {
 
 import Button from "@/components/ui/Button"
 import { Input } from "@/components/ui/input"
+import page from "@/app/studies/[studyId]/page"
  
 interface FilterTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -36,6 +37,7 @@ interface FilterTableProps<TData, TValue> {
   // setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>
   rowSelection: any
   setRowSelection: React.Dispatch<React.SetStateAction<any>>
+  pageCount?: number
 }
  
 export function FilterTable<TData, TValue>({
@@ -49,6 +51,7 @@ export function FilterTable<TData, TValue>({
   // setColumnFilters,
   rowSelection,
   setRowSelection,
+  pageCount,
 }: FilterTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -56,7 +59,7 @@ export function FilterTable<TData, TValue>({
   )
   //const [rowSelection, setRowSelection] = React.useState({})
   //console.log(rowSelection)
-
+  console.log(pageCount)
   const table = useReactTable({
     data,
     columns,
@@ -67,6 +70,11 @@ export function FilterTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
+    initialState: {
+      pagination: {
+        pageSize: 5,
+      },
+    },
     state: {
       sorting,
       columnFilters,

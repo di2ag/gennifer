@@ -15,6 +15,7 @@ import {
   } from "@/components/ui/sheet"
 import { FilterTable } from './ui/FilterTable';
 import { SideNavItemProps } from '@/const';
+import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 
 const SideNavItemVariants = cva(
@@ -44,12 +45,13 @@ const SideNavItem = ({ children, width, size, text, data, columns, searchValue, 
     const [rowSelection, setRowSelection] = React.useState({})
     
     const handleSaveClick = () => {
+        console.log('Saving...')
         const selected = Object.entries(rowSelection).map(([key, value]) => data[key].pk)
         let key:string = ''
         if (text.toLowerCase() === 'genes') {
             key = 'gene_ids'
         } else if (text.toLowerCase() === 'studies') {
-            key = 'task_ids'
+            key = 'study_ids'
         } else if (text.toLowerCase() === 'algorithms') {
             key = 'algorithm_ids'
         } else if (text.toLowerCase() === 'datasets') {
@@ -72,34 +74,39 @@ const SideNavItem = ({ children, width, size, text, data, columns, searchValue, 
         </Button>
     </SheetTrigger>
     <SheetContent position="left" size="content" >
-        <SheetHeader>
-        <SheetTitle>Select {text}:</SheetTitle>
-        <SheetDescription>
-            Select all that you wish to view.
-        </SheetDescription>
-        </SheetHeader>
-        <div className="grid gap-4 py-4">
-        <FilterTable
-        columns={columns} 
-        data={data} 
-        searchPlaceholderText={`Search ${text}...`}
-        searchValue={searchValue}
-        rowSelection={rowSelection}
-        setRowSelection={setRowSelection}
-        />
+        <ScrollArea asChild className="h-72">
+        <div>
+            <SheetHeader>
+            <SheetTitle>Select {text}:</SheetTitle>
+            <SheetDescription>
+                Select all that you wish to view.
+            </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-4 py-4">
+            <FilterTable
+            columns={columns} 
+            data={data} 
+            searchPlaceholderText={`Search ${text}...`}
+            searchValue={searchValue}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+            pageCount={5}
+            />
+            </div>
+            <SheetFooter>
+                <SheetClose asChild>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSaveClick}
+                        type="submit"
+                        >
+                        Save changes
+                    </Button>
+                </SheetClose>
+            </SheetFooter>
         </div>
-        <SheetFooter>
-            <SheetClose asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSaveClick}
-                    type="submit"
-                    >
-                    Save changes
-                </Button>
-            </SheetClose>
-        </SheetFooter>
+        </ScrollArea>
     </SheetContent>
     </Sheet>
     );

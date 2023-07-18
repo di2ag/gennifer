@@ -6,6 +6,8 @@ import Paragraph from "@/components/ui/Paragraph";
 import { DataTable } from "@/components/ui/DataTable";
 import { taskColumns } from "@/app/studies/columns";
 import { AlgorithmProps, DatasetProps, StudyProps, TaskProps } from "@/const";
+import { AuthWrapper } from "@/lib/authClientWrapper";
+import { Suspense } from "react";
 
 interface StudyEditorProps {
     study: StudyProps;
@@ -16,10 +18,12 @@ interface StudyEditorProps {
 const StudyEditor = async ({ study, algorithms, datasets }: StudyEditorProps ) => {
   const user = await getServerSession(authOptions)
   if (!user) return notFound()
-  console.log(study);
-  console.log(study.tasks);
+  // console.log(study);
+  // console.log(study.tasks);
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
+    <AuthWrapper>
     <div className='container flex flex-col gap-6'>
       <LargeHeading>{study.name}</LargeHeading>
       <div className='text-center md:text-left mt-4 -mb-4 space-y-1'>
@@ -35,6 +39,8 @@ const StudyEditor = async ({ study, algorithms, datasets }: StudyEditorProps ) =
       algorithms={algorithms}
       datasets={datasets}/>
     </div>
+    </AuthWrapper>
+    </Suspense>
   )
 }
 

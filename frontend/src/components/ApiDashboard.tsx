@@ -7,6 +7,8 @@ import { DataTable } from "@/ui/DataTable";
 import { datasetColumns, studyColumns } from "@/app/dashboard/columns";
 import { Separator } from "@/components/ui/separator"
 import { getGenniferUrl } from "@/lib/utils";
+import { AuthWrapper } from "@/lib/authClientWrapper";
+import { Suspense } from "react";
 
 const ApiDashboard = async () => {
   const user = await getServerSession(authOptions)
@@ -35,6 +37,7 @@ const ApiDashboard = async () => {
   .then((resp) => resp.json());
 
   return (
+    <AuthWrapper>
     <div className='container flex flex-col gap-6'>
       <LargeHeading>Welcome, {user.user?.first_name}</LargeHeading>
       <div className='text-center md:text-left mt-4 -mb-4 space-y-1'>
@@ -44,23 +47,29 @@ const ApiDashboard = async () => {
       <Separator className="border-slate-100"/>
       <div>
       <Paragraph className="text-center md:text-left mt-4 -mb-4 font-semibold">Your Datasets:</Paragraph>
+      <Suspense fallback={<div>Loading...</div>}>
       <DataTable
       columns={datasetColumns} 
       data={datasets} 
       doButtonText="Add Dataset" 
       searchPlaceholderText="Filter datasets..."
       searchValue="title"/>
+      </Suspense>
       </div>
       <div>
       <Paragraph className="text-center md:text-left mt-4 -mb-4 font-semibold">Your Studies:</Paragraph>
+      <Suspense fallback={<div>Loading...</div>}>
       <DataTable 
         columns={studyColumns}
         data={studies} 
         doButtonText="Create Study" 
         searchPlaceholderText="Filter studies..."
         searchValue="name"/>
+      </Suspense>
       </div>
+
     </div>
+    </AuthWrapper>
   )
 }
 

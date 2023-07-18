@@ -15,7 +15,7 @@ const SideNav: FC<SideNavProps> = ({
     <header className="fixed backdrop-blur-sm bg-white/75 dark:bg-slate-900/75 z-50 border-r border-slate-300 dark:border-slate-700 shadow-sm">
 	<div className="flex-col min-h-screen">
       <div className="flex flex-col items-center justify-center pt-7 pb-3">
-        <span className="text-md text-slate-800 dark:text-slate-100">Filters</span>
+        <span className="text-md text-slate-800 dark:text-slate-400">Filters</span>
       </div>
       <div className="pb-2">
         <Separator className="border-slate-100"/>
@@ -36,7 +36,7 @@ const SideNav: FC<SideNavProps> = ({
 						setCytoscapeRequest={setCytoscapeRequest}
 						cachedResults={cachedResults}>
 							{icon}
-							<div className="hidden xl:inline-flex flex-none text-md font-semibold ">
+							<div className="hidden xl:inline-flex flex-none text-md">
 								{text}
 							</div>
 						</SideNavItem>

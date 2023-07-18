@@ -10,6 +10,7 @@ import { HiTemplate } from "react-icons/hi";
 import { SideNavButtonItemProps } from '@/const';
 import CytoscapeClient from '@/components/CytoscapeClient';
 import { getGenniferUrl } from '@/lib/utils';
+import { AuthWrapper } from '@/lib/authClientWrapper';
 
 
 const CytoscapeDashboard = async () => {
@@ -19,7 +20,7 @@ const CytoscapeDashboard = async () => {
     // Fetch genes from API
     const genes = await fetch(getGenniferUrl() + 'genes/', { 
       next: { 
-        //revalidate: 1000,
+        revalidate: 1000,
         tags: ['genes'],
       },
       headers: {
@@ -30,7 +31,7 @@ const CytoscapeDashboard = async () => {
     // Fetch datasets from API
     const datasets = await fetch(getGenniferUrl() + 'datasets/', { 
       next: { 
-        //revalidate: 1000,
+        revalidate: 1000,
         tags: ['datasets'],
       },
       headers: {
@@ -41,7 +42,7 @@ const CytoscapeDashboard = async () => {
     // Fetch Studies from API
     const studies = await fetch(getGenniferUrl() + 'studies/', { 
       next: { 
-        //revalidate: 1000,
+        revalidate: 1000,
         tags: ['studies'],
       },
       headers: {
@@ -52,7 +53,7 @@ const CytoscapeDashboard = async () => {
     // Fetch Algorithms from API
     const algorithms = await fetch(getGenniferUrl() + 'algorithms/', { 
       next: { 
-        //revalidate: 1000,
+        revalidate: 1000,
         tags: ['algorithms'],
       },
       headers: {
@@ -92,11 +93,13 @@ const CytoscapeDashboard = async () => {
   ];
 
   return (
-    <div className="grid">
+    <AuthWrapper>
+      <div className="grid">
         <CytoscapeClient
         items={items}
         />
       </div>
+    </AuthWrapper>
   )
 }
 

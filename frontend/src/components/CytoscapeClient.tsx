@@ -20,7 +20,7 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
     const { data: session, status, update } = useSession();
     const [cytoRequest, setCytoRequest] = useState<CytoscapeRequestProps>({
         gene_ids: [],
-        task_ids: [],
+        study_ids: [],
         algorithm_ids: [],
         dataset_ids: [],
         cached_results: [],
@@ -37,7 +37,8 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
         // Fetch results from graph endpoint
         const fetchResults = async () => {
         try {
-            update()
+            //update()
+            console.log('Fetching results...')
             const response = await fetch(getGenniferUrl() + 'graph/', {
                 method: 'POST',
                 headers: {
@@ -65,18 +66,18 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
         }
     }
     fetchResults()
-    }, [cytoRequest])
+    }, [cytoRequest, session?.user.access_token])
 
     useEffect(() => {
         if (cytoScreenRef.current) {
           const { clientHeight, clientWidth } = cytoScreenRef.current;
           setWidth(clientWidth);
           setHeight(clientHeight);
-          console.log('Height:', clientHeight);
-          console.log('Width:', clientWidth);
+        //   console.log('Height:', clientHeight);
+        //   console.log('Width:', clientWidth);
         }
       }, [cytoScreenRef.current]);
-
+    
   return (
     <div className='flex'>
         <div className='min-h-screen'>
@@ -99,7 +100,7 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
             <div className={`absolute inset-0 flex flex-col gap-6 items-center justify-center ${cytoResponse.elements.length > 0 ? 'hidden' : ''}`}>
                 <LargeHeading>Select Filters to Begin</LargeHeading>
                 <div className='text-center mt-4 -mb-4 space-y-1'>
-                <Paragraph>To start seeing results population, you should select at least two genes plus a study or an algorithm and a dataset.</Paragraph>
+                <Paragraph>To start seeing results populate, select at least two genes <span className="italic">plus</span> a study <span className="font-semibold">or</span> an algorithm and a dataset.</Paragraph>
                 </div>
             </div>
             </div>

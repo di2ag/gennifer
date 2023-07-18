@@ -13,8 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
 import { formatDate, getGenniferUrl } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
-import { method } from "lodash"
 import { revalidate } from "@/actions/revalidate"
 
 
@@ -35,6 +35,11 @@ export type Study = {
     timestamp: string;
 }
 
+function PerformRedirect(url: string) {
+  const router = useRouter()
+  router.push(url)
+}
+
 export const datasetColumns: ColumnDef<Dataset>[] = [
   {
     accessorKey: "title",
@@ -53,6 +58,12 @@ export const datasetColumns: ColumnDef<Dataset>[] = [
   {
     accessorKey: "description",
     header: "Description",
+    cell: ({ row }) => {
+      const dataset = row.original
+      return (
+        <span>{dataset.description.length > 200 ? dataset.description.substring(0, 200) + '...' : dataset.description}</span>
+      )
+    }
   },
   {
     accessorKey: "zenodo_id",
@@ -85,8 +96,12 @@ export const datasetColumns: ColumnDef<Dataset>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+    
+    const handleDeleteDataset = async (datasetId: string) => {
+    //   await PerformDelete(datasetId, getGenniferUrl() + 'datasets/', 'datasets');
+    }
     const dataset = row.original
-
+    
     return (
         <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -103,7 +118,8 @@ export const datasetColumns: ColumnDef<Dataset>[] = [
             Copy Dataset ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Delete dataset</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDeleteDataset(dataset.pk)}>Delete dataset</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => window.open("https://zenodo.org/record/" + dataset.zenodo_id)}>View on Zonodo</DropdownMenuItem>
         </DropdownMenuContent>
         </DropdownMenu>
     )
@@ -141,7 +157,7 @@ export const studyColumns: ColumnDef<Study>[] = [
       }
     },
     {
-        accessorKey: "status",
+        accessorKey: "task_status",
         header: ({ column }) => {
             return (
               <Button
@@ -168,42 +184,71 @@ export const studyColumns: ColumnDef<Study>[] = [
     {
       id: "actions",
       cell: ({ row }) => {
-        const { data: session, status, update } = useSession();
-        update();
 
-        const handleDeleteStudy = async (studyId: number) => {
-          await fetch(getGenniferUrl() + 'studies/' + studyId, {
+        function Cell ({ study }: { study: Study }) {
+          const { data: session } = useSession()
+          const router = useRouter()
+          
+          const handleDeleteStudy = async (studyId: number) => {
+            await fetch(getGenniferUrl() + 'studies/' + studyId, {
               headers: {
                   "Authorization": "Bearer " + session?.user.access_token,
               },
               method: "DELETE",
             });
-          
-          revalidate('studies');
-          console.log("Deleted Bitch");
+    
+            revalidate('studies');
+          }
+
+          const handleDownloadStudy = async (studyId: number) => {
+            await fetch(getGenniferUrl() + 'download_study/' + studyId, {
+                headers: {
+                    "Authorization": "Bearer " + session?.user.access_token,
+                },
+                method: "GET",
+              })
+              .then((response) => response.blob())
+              .then((blob => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const link = document.createElement('a');
+                link.href=url;
+                link.setAttribute('download', `study-${studyId}.json`);
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode?.removeChild(link)
+              }));
+          }
+
+            return (
+            <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(study.pk.toString())}
+                >
+                Copy Study ID
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push('/studies/' + study.pk)}>Edit study</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleDownloadStudy(study.pk)}>Download study</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleDeleteStudy(study.pk)}>Delete study</DropdownMenuItem>
+
+            </DropdownMenuContent>
+            </DropdownMenu>
+            )
         }
+
       const study = row.original
   
       return (
-          <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-              </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(study.pk.toString())}
-              >
-              Copy Study ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleDeleteStudy(study.pk)}>Delete study</DropdownMenuItem>
-          </DropdownMenuContent>
-          </DropdownMenu>
-      )
+          <Cell study={study}/>
+        )
       },
-      },
+    }
   ]

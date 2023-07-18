@@ -52,6 +52,7 @@ interface DataTableProps<TData, TValue> {
   studyId?: number
   algorithms?: AlgorithmProps[]
   datasets?: DatasetProps[]
+  pageCount?: number
 }
  
 export function DataTable<TData, TValue>({
@@ -63,6 +64,7 @@ export function DataTable<TData, TValue>({
   studyId,
   algorithms,
   datasets,
+  pageCount,
 }: DataTableProps<TData, TValue>) {
   const { data: session } = useSession();
 
@@ -86,6 +88,7 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    pageCount: pageCount ?? 10,
     state: {
       sorting,
       columnFilters,

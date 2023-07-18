@@ -8,10 +8,10 @@ import { toast } from '@/ui/toast';
 const SignOutButton = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const signOutWithGoogle = async () => {
+    const signOutCredentials = () => {
         setIsLoading(true);
         try {
-            await signOut();
+            signOut({ callbackUrl: '/'});
 
         } catch (error) {
             toast({
@@ -23,7 +23,7 @@ const SignOutButton = () => {
     }
 
   return (
-    <Button onClick={signOutWithGoogle} isLoading={isLoading}>
+    <Button onClick={(e) => {e.preventDefault(); signOutCredentials()}} isLoading={isLoading}>
         Sign Out
     </Button>
   )

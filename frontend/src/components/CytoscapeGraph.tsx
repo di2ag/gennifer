@@ -25,7 +25,6 @@ interface CytoscapeGraphProps {
     windowHeight: number;
     windowWidth: number;
     active: boolean
-  
 }
 
 function getDefaultStylesheet() {
@@ -35,19 +34,26 @@ function getDefaultStylesheet() {
 const CytoscapeGraph: FC<CytoscapeGraphProps> = ({ elements, windowHeight, windowWidth, active }) => {
     const cyRef = useRef<cytoscape.Core | undefined>();
     useEffect(() => {
+        console.log('New elements...')
+        const cy = cyRef.current;
+        if (!cy) { 
+            return;
+        }
+        const newLayout = cy.layout(layout);
+        newLayout.run();
+        cy.center()
+      }, [elements]);
+    
+    useEffect(() => {
       const cy = cyRef.current;
       if (!cy) {
         return;
       }
-      cy.on("select", "edge", (event) => {
-       // const transitionName = event.target[0].data().label;
-        // eslint-disable-next-line no-console
-        console.log(`> transition '${event.target[0]}' selected`);
-      });
-      const newLayout = cy.layout(layout);
-      newLayout.run();
-      cy.center()
-    }, [elements]);
+      cy.on('mouseover', 'node', function(event) {
+        var node = event.target;
+        // console.log('mouseover', node.id())
+    });
+  }, []);
 
     return (
         <div className='h-min-screen w-full items-center justify-center'>
