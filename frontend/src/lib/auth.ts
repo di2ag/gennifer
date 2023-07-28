@@ -67,6 +67,7 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials, req) {
+                console.log('In authorization.')
                 let username:string = credentials?.username!;
                 let password:string = credentials?.password!;
                 var urlencoded = new URLSearchParams();
@@ -85,8 +86,8 @@ export const authOptions: NextAuthOptions = {
                 const token = await response.json();
                 token.received_at = Date.now()/1000;
                 token.expires_at = token.received_at + token.expires_in;
-                // console.log(token);
-                // console.log(response.ok);
+                console.log(token);
+                console.log(response.ok);
                 // Now call the me endpoint to get the user details
                 const userResponse = await fetch(getUserDetails(), {
                     method: "GET",

@@ -6,10 +6,10 @@
 	url = git@github.com:di2ag/gennifer-grisli.git
 [submodule "genie3"]
 	path = genie3
-	url = https://github.com/di2ag/gennifer-genie3.git
+	url = git@github.com:di2ag/gennifer-genie3.git
 [submodule "grnboost2"]
 	path = grnboost2
-	url = https://github.com/di2ag/gennifer-grnboost2.git
+	url = git@github.com:di2ag/gennifer-grnboost2.git
 [submodule "bkb-grn"]
 	path = bkb-grn
 	url = git@github.com:yakaboskic/gennifer-bkb-grn.git
