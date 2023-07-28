@@ -128,6 +128,42 @@ services:
     depends_on:
         - grnboost2
         - redis
+  
+  bkb-grn:
+    build:
+        context: ./bkb-grn
+        dockerfile: Dockerfile
+    restart: always
+    user: gennifer_user
+    ports:
+        - 5005:5000
+    secrets:
+        - gennifer_key
+    environment:
+        - PYTHONUNBUFFERED=1
+        - SECRET_KEY_FILE=/run/secrets/gennifer_key
+        - CELERY_BROKER_URL=redis://redis:6379/0
+        - CELERY_RESULT_BACKEND=redis://redis:6379/0
+          #command: gunicorn -c gunicorn.config.py -b 0.0.0.0:5000 'grnboost2:create_app()'
+    command: flask --app bkb_grn run --debug --host 0.0.0.0
+    depends_on:
+        - redis
+
+  worker-bkb-grn:
+    build:
+        context: ./bkb-grn
+        dockerfile: Dockerfile
+    secrets:
+        - gurobi_lic
+    command: celery --app bkb_grn.tasks.celery worker -Q bkb_grn --loglevel=info
+    environment:
+        - PYTHONUNBUFFERED=1
+        - CELERY_BROKER_URL=redis://redis:6379/0
+        - CELERY_RESULT_BACKEND=redis://redis:6379/0
+        - GRB_LICENSE_FILE=/run/secrets/gurobi_lic
+    depends_on:
+        - bkb-grn
+        - redis
 
   redis:
     image: redis:6-alpine
@@ -135,3 +171,5 @@ services:
 secrets:
   gennifer_key:
     file: secrets/gennifer/secret_key.txt
+  gurobi_lic:
+    file: secrets/gennifer/gurobi.lic
