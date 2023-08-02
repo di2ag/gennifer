@@ -63,7 +63,7 @@ export const styleList = [
     }
   },
   {
-    "selector": "edge[directed='true']",
+    "selector": "edge[directed=true]",
     "style": {
       "target-arrow-color": "#CED0D0",
       "target-arrow-shape": "triangle",
@@ -129,7 +129,7 @@ export const initCytoscapeInstance = (dataObj) => {
         }
       },
       {
-        selector: "edge[directed='true']",
+        selector: "edge[directed=true]",
         style: {
           "target-arrow-color": "#6774cb",
           "target-arrow-shape": "triangle",

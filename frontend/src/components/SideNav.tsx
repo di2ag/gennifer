@@ -4,6 +4,7 @@ import SideNavItem from "@/components/SideNavItem";
 import { SideNavProps } from "@/const";
 import { Separator } from "@/ui/separator";
 import { FC } from 'react';
+import { Slider } from "./ui/slider";
 
 const SideNav: FC<SideNavProps> = ({ 
 	items,
@@ -20,6 +21,7 @@ const SideNav: FC<SideNavProps> = ({
       <div className="pb-2">
         <Separator className="border-slate-100"/>
       </div>
+	  <div className="pb-3">
 				{items.map(({ text, icon, data, columns, searchValue }, i) => (
 					<div
 						key={`header-${i}`}
@@ -43,6 +45,19 @@ const SideNav: FC<SideNavProps> = ({
 					</div>
 				))}
 			</div>
+	  <div className="pb-2">
+        <Separator className="border-slate-100"/>
+      </div>
+	  <div className="flex flex-col mr-5 ml-5 items-center text-center pt-5">
+        <span className="text-sm text-slate-800 dark:text-slate-400 pb-5">Edge Weight Threshold</span>
+		<Slider
+			defaultValue={[0]}
+			max={100}
+			min={0}
+			step={1}
+			/>
+      </div>
+	</div>
 	</header>
   )
 }

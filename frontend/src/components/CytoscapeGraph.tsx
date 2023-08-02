@@ -33,8 +33,15 @@ function getDefaultStylesheet() {
 
 const CytoscapeGraph: FC<CytoscapeGraphProps> = ({ elements, windowHeight, windowWidth, active }) => {
     const cyRef = useRef<cytoscape.Core | undefined>();
+    const scalingFactor = 10;
+
     useEffect(() => {
         console.log('New elements...')
+        elements.forEach((element) => {
+          if (element.data.hasOwnProperty('weight')) {
+            element.data.weight *= scalingFactor;
+          }
+        });
         const cy = cyRef.current;
         if (!cy) { 
             return;
