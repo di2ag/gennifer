@@ -13,3 +13,6 @@
 [submodule "bkb-grn"]
 	path = bkb-grn
 	url = git@github.com:yakaboskic/gennifer-bkb-grn.git
+[submodule "annotator"]
+	path = annotator
+	url = git@github.com:di2ag/gennifer-annotator.git
