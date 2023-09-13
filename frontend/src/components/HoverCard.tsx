@@ -64,7 +64,7 @@ export function EdgeHoverCard({ weight, algorithm, dataset, annotations }: EdgeH
     <CardContent>
         <Paragraph size="sm"><strong>Algorithm:</strong> {algorithm}</Paragraph>
         <Paragraph size="sm"><strong>Dataset:</strong> {dataset}</Paragraph>
-        <Paragraph size="sm"><strong>Evidence Count:</strong>{annotations.translator.length}</Paragraph>
+        <Paragraph size="sm"><strong>Evidence Count:</strong> {annotations.translator.length}</Paragraph>
     </CardContent>
     <CardFooter>
         <Sheet>
@@ -82,17 +82,28 @@ export function EdgeHoverCard({ weight, algorithm, dataset, annotations }: EdgeH
                     Annotated evidence for this edge.
                 </SheetDescription>
                 </SheetHeader>
-                    <div className="flex flex-col text-center py-4">
+                    <div className="flex flex-col text-justify py-4">
                         { annotations.translator.length === 0 &&
                             <Paragraph size="sm">No evidence found.</Paragraph>
                         }
-                        { annotations.translator.length > 0 &&
-                            annotations.translator.map((annotation: any) => {
-                            <div>
-                                {annotation}
-                            </div>
-                         })
-                        }
+                        <ul>
+                        { annotations.translator.map((annotation: any ) => (
+                            <li>
+                                <h2 className="font-extrabold">{annotation.formatted_relation}</h2>
+                                <div className="flex flex-col text-justify py-1">
+                                <ul>
+                                {
+                                annotation.results.map((result:any) => (
+                                    <li>
+                                    <Paragraph size="sm"><span className="italic">Resourse:</span> {result.resource_id}</Paragraph>
+                                    <Paragraph size="sm"><span className="italic">Primary Source:</span> {result.primary_source}</Paragraph>
+                                    </li>
+                                ))}
+                                </ul>
+                                </div>
+                            </li>
+                         ))}
+                        </ul>
                     </div>
                 <SheetFooter>
                     <SheetClose asChild>
