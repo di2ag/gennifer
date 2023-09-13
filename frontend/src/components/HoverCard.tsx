@@ -87,14 +87,14 @@ export function EdgeHoverCard({ weight, algorithm, dataset, annotations }: EdgeH
                             <Paragraph size="sm">No evidence found.</Paragraph>
                         }
                         <ul>
-                        { annotations.translator.map((annotation: any ) => (
-                            <li>
+                        { annotations.translator.map((annotation: any, i: number ) => (
+                            <li key={`${annotation.formatted_relation}-${i}`}>
                                 <h2 className="font-extrabold">{annotation.formatted_relation}</h2>
                                 <div className="flex flex-col text-justify py-1">
                                 <ul>
                                 {
-                                annotation.results.map((result:any) => (
-                                    <li>
+                                annotation.results.map((result:any, j:number) => (
+                                    <li key={`${annotation.formatted_relation}-${j}`}>
                                     <Paragraph size="sm"><span className="italic">Resourse:</span> {result.resource_id}</Paragraph>
                                     <Paragraph size="sm"><span className="italic">Primary Source:</span> {result.primary_source}</Paragraph>
                                     </li>
