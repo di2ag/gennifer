@@ -63,7 +63,7 @@ export const styleList = [
     }
   },
   {
-    "selector": "edge[directed=true]",
+    "selector": "edge[?directed]",
     "style": {
       "target-arrow-color": "#CED0D0",
       "target-arrow-shape": "triangle",

@@ -34,6 +34,7 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
     const [height, setHeight] = useState(0);
 
     useEffect(() => {
+        console.log(cytoRequest)
         // Fetch results from graph endpoint
         const fetchResults = async () => {
         try {
@@ -95,7 +96,8 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
                     result_ids={cytoResponse.result_ids}
                     windowHeight={height}
                     windowWidth={width}
-                    active={cytoResponse.elements.length > 0}/>
+                    active={cytoResponse.elements.length > 0}
+                    cytoRequest={cytoRequest}/>
             </div>
             <div className={`absolute inset-0 flex flex-col gap-6 items-center justify-center ${cytoResponse.elements.length > 0 ? 'hidden' : ''}`}>
                 <LargeHeading>Select Filters to Begin</LargeHeading>
