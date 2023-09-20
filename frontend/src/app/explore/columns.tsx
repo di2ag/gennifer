@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/DropdownMenu"
-import { AlgorithmProps, DatasetProps, GeneProps, StudyProps } from "@/const"
+import { AlgorithmProps, DatasetProps, GeneProps, StudyProps, EvidenceProps } from "@/const"
 
 
 // export type DatasetFilter = {
@@ -236,6 +236,56 @@ export const studyFilterColumns: ColumnDef<StudyProps>[] = [
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
               Name
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          )
+        },
+    }
+  ]
+
+  export const evidenceFilterColumns: ColumnDef<EvidenceProps>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+      accessorKey: "resource_id",
+      header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Resource
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          )
+        },
+    },
+    {
+      accessorKey: "primary_source",
+      header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Primary Source
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           )

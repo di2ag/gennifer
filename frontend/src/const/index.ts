@@ -74,6 +74,17 @@ export interface AlgorithmProps {
     checked: false;
 }
 
+export interface AnnotationProps {
+    name: string;
+    type: string;
+    evidence: EvidenceProps[];
+}
+
+export interface EvidenceProps {
+    resource_id: string;
+    primary_source: string;
+}
+
 export interface SideNavItemProps {
 	width: 'full' | 'inline' | 'mobile';
 	size: 'default' | 'small' | 'large';
@@ -99,6 +110,9 @@ export interface SideNavProps {
 	items: SideNavButtonItemProps[];
     setCytoscapeRequest: React.Dispatch<SetStateAction<CytoscapeRequestProps>>
     cachedResults: number[];
+    setEdgeWeightThreshold: React.Dispatch<SetStateAction<number>>
+    maxEvidenceNumber: number;
+    setEvidenceNumberThreshold: React.Dispatch<SetStateAction<number>>
 }
 
 export interface CytoscapeRequestProps {

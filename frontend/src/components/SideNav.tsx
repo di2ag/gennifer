@@ -10,6 +10,9 @@ const SideNav: FC<SideNavProps> = ({
 	items,
 	setCytoscapeRequest,
 	cachedResults,
+	setEdgeWeightThreshold,
+	maxEvidenceNumber,
+	setEvidenceNumberThreshold
  }) => {
 
   return (
@@ -52,9 +55,20 @@ const SideNav: FC<SideNavProps> = ({
         <span className="text-sm text-slate-800 dark:text-slate-400 pb-5">Edge Weight Threshold</span>
 		<Slider
 			defaultValue={[0]}
-			max={100}
+			max={1}
+			min={0}
+			step={.01}
+			onValueChange={(value) => setEdgeWeightThreshold(value[0])}
+			/>
+      </div>
+	  <div className="flex flex-col mr-5 ml-5 items-center text-center pt-5">
+        <span className="text-sm text-slate-800 dark:text-slate-400 pb-5">Evidence Count Threshold</span>
+		<Slider
+			defaultValue={[0]}
+			max={maxEvidenceNumber}
 			min={0}
 			step={1}
+			onValueChange={(value) => setEvidenceNumberThreshold(value[0])}
 			/>
       </div>
 	</div>

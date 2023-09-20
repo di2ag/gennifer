@@ -1,6 +1,7 @@
 'use client'
 
 import {useState, memo, useMemo, useRef, useCallback, useEffect} from 'react';
+import ReactDom from 'react-dom';
 import cytoscape, { Stylesheet, ElementDefinition } from 'cytoscape';
 import popper from 'cytoscape-popper';
 import klay from 'cytoscape-klay';
@@ -13,10 +14,11 @@ import { layoutList, initCytoscapeInstance, styleList, layout } from '@/lib/grap
 import CytoscapeComponent from "react-cytoscapejs";
 
 import { FC } from 'react';
-import { CytoscapeRequestProps } from '@/const';
+import { AnnotationProps, CytoscapeRequestProps } from '@/const';
 import { createRoot } from 'react-dom/client';
 import Button from './ui/Button';
 import { EdgeHoverCard, GeneHoverCard } from '@/components/HoverCard';
+import cytoscapePopper from 'cytoscape-popper';
 
 // initialize 3rd party layouts
 cytoscape.use(klay);
@@ -32,15 +34,31 @@ interface CytoscapeGraphProps {
     windowWidth: number;
     active: boolean;
     cytoRequest: CytoscapeRequestProps;
+    edgeWeightThreshold: number;
+    evidenceNumberThreshold: number;
 }
 
 function getDefaultStylesheet() {
     return styleList;
   }
 
-  const ReactButton = () => {
-    return <Button type="button">React Button</Button>;
+const destroyPopper = (cyPopperRef: any) => {
+  let div = cyPopperRef.current.state.elements.popper
+  let refDiv = cyPopperRef.current.state.elements.reference;
+  
+  cyPopperRef.current.destroy();
+
+  let rm = (div:any) => {
+    try {
+      div.parentNode.removeChild( div );
+    } catch( err ){
+      // just let it fail
+    }
   };
+
+  rm(div);
+  rm(refDiv);
+}
   
   const createContentFromComponent = (component: any) => {
     const dummyDomEle = document.createElement('div');
@@ -50,7 +68,14 @@ function getDefaultStylesheet() {
     return dummyDomEle;
   };
 
-const CytoscapeGraph: FC<CytoscapeGraphProps> = ({ elements, windowHeight, windowWidth, active, cytoRequest }) => {
+const CytoscapeGraph: FC<CytoscapeGraphProps> = ({ 
+  elements, 
+  windowHeight, 
+  windowWidth, 
+  active, 
+  cytoRequest, 
+  edgeWeightThreshold,
+  evidenceNumberThreshold }) => {
     const cyRef = useRef<cytoscape.Core | undefined>();
     const cyPopperRef = useRef<any>(null);
     const scalingFactor = 1;
@@ -91,52 +116,98 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({ elements, windowHeight, windo
       if (!cy) {
         return;
       }
-      cy.on('mouseover', 'node', function(event) {
-        var node = event.target;
-      cyPopperRef.current =  node.popper({
+      cy.nodes().on('mouseover', (event) => {
+        cyPopperRef.current =  event.target.popper({
         content: createContentFromComponent(
-        <GeneHoverCard
-        name={node.data()['name']}
-        curie={node.data()['curie']}
-        chp_preffered_curie={node.data()['chp_preffered_curie']}
-        />
-           ),
+          <GeneHoverCard
+          name={event.target.data()['name']}
+          curie={event.target.data()['curie']}
+          chp_preffered_curie={event.target.data()['chp_preferred_curie']}
+          />
+        ),
         popper: {
           placement: 'right',
-          removeOnDestroy: true,
         },
       });
     });
 
-    cy.on('mouseout', 'node', () => {
+    cy.nodes().on('mouseout', () => {
       if (cyPopperRef) {
-        cyPopperRef.current.destroy();
+        destroyPopper(cyPopperRef)
       }
-      });
-    cy.on('mouseover', 'edge', function(event) {
+    });
+    cy.edges().on('mouseover', (event) => {
       var edge = event.target;
+      var annotations = edge.data()['annotations'];
+      var tr_annotations: AnnotationProps[] = []
+      if (annotations.hasOwnProperty('translator')) {
+        annotations['translator'].map((a: any) => {
+          tr_annotations.push({
+            'name': a.formatted_relation,
+            'type': 'translator',
+            'evidence': a.results
+          })
+        }) 
+      }
     cyPopperRef.current =  edge.popper({
       content: createContentFromComponent(
       <EdgeHoverCard
       weight={edge.data()['weight']}
       algorithm={edge.data()['algorithm']}
       dataset={edge.data()['dataset']}
-      annotations={edge.data()['annotations']}
+      tr_annotations={tr_annotations}
       />
          ),
       popper: {
         placement: 'right',
-        removeOnDestroy: true,
       },
     });
   });
 
-  cy.on('mouseout', 'edge', () => {
+  cy.edges().on('mouseout', () => {
     if (cyPopperRef) {
-      cyPopperRef.current.destroy();
+      destroyPopper(cyPopperRef)
     }
     });
-    }, []);
+    }, [elements]);
+
+    useEffect(() => {
+      const cy = cyRef.current;
+      if (!cy) {
+        return;
+      }
+      cy.edges().forEach((edge) => {
+        if (parseFloat(edge.data()['weight']) >= edgeWeightThreshold && edge.data()['annotations']['translator'].length >= evidenceNumberThreshold) {
+          edge.style('display', 'element');
+          if (edge.source().style('display') === 'none') {
+            edge.source().style('display', 'element');
+          }
+          if (edge.target().style('display') === 'none') {
+            edge.source().style('display', 'element');
+          }
+        } else {
+          edge.style('display', 'none');
+        }
+      })
+      cy.nodes().forEach((node) => {
+          let hasDisplayedOutgoers = false;
+          let hasDisplayedIncomers = false;
+          node.outgoers().forEach((outgoer) => {
+            if (outgoer.style('display') === 'element') {
+              hasDisplayedOutgoers = true;
+            }
+          })
+          node.incomers().forEach((incomer) => {
+            if (incomer.style('display') === 'element') {
+              hasDisplayedIncomers = true;
+            }
+          if (!hasDisplayedOutgoers && !hasDisplayedIncomers) {
+            console.log('here')
+            node.style('display', 'none');
+          }
+        })
+      })
+    }, [edgeWeightThreshold, evidenceNumberThreshold]);
 
     return (
         <div className='h-min-screen w-full items-center justify-center'>

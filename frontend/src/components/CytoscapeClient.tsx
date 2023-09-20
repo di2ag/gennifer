@@ -32,6 +32,9 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
     const cytoScreenRef = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
+    const [edgeWeightThreshold, setEdgeWeightThreshold] = useState<number>(0);
+    const [maxEvidenceNumber, setMaxEvidenceNumber] = useState<number>(1);
+    const [evidenceNumberThreshold, setEvidenceNumberThreshold] = useState<number>(0);
 
     useEffect(() => {
         console.log(cytoRequest)
@@ -78,6 +81,21 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
         //   console.log('Width:', clientWidth);
         }
       }, [cytoScreenRef.current]);
+
+    useEffect(() => {
+        setMaxEvidenceNumber(() => {
+            if (cytoResponse.elements.length === 0) {
+                return 1
+            }
+            const maxEvidenceNumber = Math.max(...cytoResponse.elements.map((e) => {
+                if (e.data.hasOwnProperty('weight')) {
+                    return e.data.annotations.translator.length
+                }
+                return 0
+            }))
+            return maxEvidenceNumber
+        })
+    }, [cytoResponse.elements])
     
   return (
     <div className='flex'>
@@ -86,6 +104,9 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
                 items={items}
                 setCytoscapeRequest={setCytoRequest}
                 cachedResults={cytoResponse.result_ids}
+                setEdgeWeightThreshold={setEdgeWeightThreshold}
+                maxEvidenceNumber={maxEvidenceNumber}
+                setEvidenceNumberThreshold={setEvidenceNumberThreshold}
                 />
         </div>
         <div className='min-h-screen ml-40 w-full flex items-center justify-center'>
@@ -97,7 +118,9 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
                     windowHeight={height}
                     windowWidth={width}
                     active={cytoResponse.elements.length > 0}
-                    cytoRequest={cytoRequest}/>
+                    cytoRequest={cytoRequest}
+                    edgeWeightThreshold={edgeWeightThreshold}
+                    evidenceNumberThreshold={evidenceNumberThreshold}/>
             </div>
             <div className={`absolute inset-0 flex flex-col gap-6 items-center justify-center ${cytoResponse.elements.length > 0 ? 'hidden' : ''}`}>
                 <LargeHeading>Select Filters to Begin</LargeHeading>
