@@ -37,7 +37,7 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
     const [evidenceNumberThreshold, setEvidenceNumberThreshold] = useState<number>(0);
 
     useEffect(() => {
-        console.log(cytoRequest)
+        //console.log(cytoRequest)
         // Fetch results from graph endpoint
         const fetchResults = async () => {
         try {

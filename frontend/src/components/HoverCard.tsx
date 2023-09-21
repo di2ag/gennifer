@@ -41,11 +41,12 @@ import { FilterTable } from '@/components/ui/FilterTable';
 import { evidenceFilterColumns } from "@/app/explore/columns";
 
 import Button from "@/components/ui/Button";
-import { AnyMxRecord } from "dns";
 import Paragraph from "./ui/Paragraph";
-import LargeHeading from "./ui/LargeHeading";
 import { AnnotationProps } from "@/const";
-import React from "react";
+import React, { useEffect } from "react";
+import AnimatedParagraph from "@/components/ui/AnimatedText"
+import { fetchJustification } from "./OpenAIClient"
+import { Skeleton } from "@mui/material"
 
 interface GeneHoverCardProps {
     name: string;
@@ -54,11 +55,16 @@ interface GeneHoverCardProps {
 }
 
 interface EdgeHoverCardProps {
+    sourceName: string | null;
+    targetName: string | null;
+    directed: boolean;
     weight: string;
     algorithm: string;
     dataset: string;
     tr_annotations: AnnotationProps[];
 }
+
+
 
 export function GeneHoverCard({ name, curie, chp_preffered_curie }: GeneHoverCardProps) {
   return (
@@ -93,9 +99,103 @@ export function GeneHoverCard({ name, curie, chp_preffered_curie }: GeneHoverCar
   )
 }
 
-export function EdgeHoverCard({ weight, algorithm, dataset, tr_annotations }: EdgeHoverCardProps) {
+function EdgeSheet({ sourceName, targetName, directed, weight, algorithm, dataset, tr_annotations }: EdgeHoverCardProps) {
     const [rowSelection, setRowSelection] = React.useState({})
+    const [loadingOpenAI, setLoadingOpenAI] = React.useState<boolean>(false)
+    const [justification, setJustification] = React.useState<String>('')
 
+    const onViewEvidenceClick = async () => {
+        setLoadingOpenAI(true)
+        let systemContent = ''
+        if (directed) {
+            systemContent = "You are an expert bioinformatician. You will be provided with a source gene and a target gene, and your task is to briefly explain a possible genetic regulator relationship that the source gene may have on the target gene. If you do think there is a relationship, you should respond with: 'No relationship found.'"
+        } else {
+            systemContent = "You are an expert bioinformatician. You will be provided with a two gene names, and your task is to briefly explain a possible genetic regulatory relationship between these genes. If you do not think there is a relationship, you should respond with: 'No relationship found.'"
+        }
+        if (sourceName && targetName) {
+            let userContent = `Source gene name: ${sourceName}\n Target gene name: ${targetName}.`
+            let result = await fetchJustification(systemContent, userContent)
+            setJustification(result)
+        } else {
+            setJustification('Justification unavailable due to missing gene names.')
+        }
+        setLoadingOpenAI(false)
+    }
+
+    return (
+        <Sheet modal={true}>
+        <SheetTrigger asChild>
+            <Button className="w-full justify-center"
+            variant={"ghost"}
+            onClick={onViewEvidenceClick}>
+                View Evidence
+            </Button>
+        </SheetTrigger>
+        <SheetContent position="right" className="h-min-screen w-min-[50%] overflow-y-scroll">
+            <SheetHeader>
+                <SheetTitle>Discovered Evidence</SheetTitle>
+                <SheetDescription>
+                    Translator annotationed evidence and Large Language Model (LMM) justification for this edge.
+                </SheetDescription>
+            </SheetHeader>
+            <div className="flex flex-col pt-4 text-center sm:text-left">
+                <h3 className="font-semibold text-foreground">Justification</h3>
+                <p className="text-xs text-muted-foreground">Powered by OpenAI GPT-3.5 turbo.</p>
+                { loadingOpenAI ? 
+                    <Skeleton className="h-4"/>
+                    :
+                    <AnimatedParagraph animated show size="sm" className="text-justify py-4">{justification}</AnimatedParagraph>
+                }
+            </div>
+                <div className="flex flex-col pt-4 text-center sm:text-left">
+                <h3 className="font-semibold text-foreground">Translator Evidence</h3>
+                <p className="text-xs text-muted-foreground">Annotated evidence for this edge.</p>
+            </div>
+            <div className="flex flex-col text-justify py-4">
+                { tr_annotations.length === 0 &&
+                    <Paragraph size="sm">No evidence found.</Paragraph>
+                }
+                <Accordion type="single" collapsible className="w-full pb-4">
+                { tr_annotations.map((a: AnnotationProps, i: number) => (
+                    <AccordionItem value={`${a.name}-${i}`}>
+                    <AccordionTrigger>{a.name}</AccordionTrigger>
+                    <AccordionContent>
+                    <div className="grid gap-4 py-4">
+                        <FilterTable
+                        columns={evidenceFilterColumns} 
+                        data={a.evidence} 
+                        searchPlaceholderText={'Search by Resource...'}
+                        searchValue={'resource_id'}
+                        rowSelection={rowSelection}
+                        setRowSelection={setRowSelection}
+                        pageCount={5}
+                        />
+                    </div>
+                    </AccordionContent>
+                    </AccordionItem>
+                )
+                )}
+                </Accordion>
+            <SheetFooter>
+                <SheetClose asChild>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        type="submit"
+                        >
+                        Close
+                    </Button>
+                </SheetClose>
+            </SheetFooter>
+            </div>
+        </SheetContent>
+        </Sheet>
+    )
+}
+
+
+export function EdgeHoverCard({ sourceName, targetName, directed, weight, algorithm, dataset, tr_annotations }: EdgeHoverCardProps) {
+    
     return (
     <Card className="w-[350px] bg-slate-100">
     <CardContent>
@@ -129,59 +229,15 @@ export function EdgeHoverCard({ weight, algorithm, dataset, tr_annotations }: Ed
         </div>
     </CardContent>
     <CardFooter>
-        <Sheet>
-        <SheetTrigger asChild>
-            <Button className="w-full justify-center"
-            variant={"ghost"}>
-                View Evidence
-            </Button>
-        </SheetTrigger>
-        <SheetContent position="right" className="w-min-[50%]">
-            <SheetHeader>
-                <SheetTitle>Translator Evidence</SheetTitle>
-                <SheetDescription>
-                    Annotated evidence for this edge.
-                </SheetDescription>
-            </SheetHeader>
-            <div className="flex flex-col text-justify py-4">
-                { tr_annotations.length === 0 &&
-                    <Paragraph size="sm">No evidence found.</Paragraph>
-                }
-                <Accordion type="single" collapsible className="w-full pb-4">
-                { tr_annotations.map((a: AnnotationProps, i: number) => (
-                    <AccordionItem value={`${a.name}-${i}`}>
-                      <AccordionTrigger>{a.name}</AccordionTrigger>
-                      <AccordionContent>
-                      <div className="grid gap-4 py-4">
-                        <FilterTable
-                        columns={evidenceFilterColumns} 
-                        data={a.evidence} 
-                        searchPlaceholderText={'Search by Resource...'}
-                        searchValue={'resource_id'}
-                        rowSelection={rowSelection}
-                        setRowSelection={setRowSelection}
-                        pageCount={5}
-                        />
-                      </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                )
-                )}
-                </Accordion>
-            <SheetFooter>
-                <SheetClose asChild>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        type="submit"
-                        >
-                        Close
-                    </Button>
-                </SheetClose>
-            </SheetFooter>
-            </div>
-        </SheetContent>
-        </Sheet>
+        <EdgeSheet
+        sourceName={sourceName}
+        targetName={targetName}
+        directed={directed}
+        weight={weight}
+        algorithm={algorithm}
+        dataset={dataset}
+        tr_annotations={tr_annotations}
+        />
     </CardFooter>
     </Card>
     )

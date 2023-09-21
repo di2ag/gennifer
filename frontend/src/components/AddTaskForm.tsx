@@ -42,6 +42,8 @@ import { DialogClose } from "@radix-ui/react-dialog"
 import { useRouter } from 'next/navigation';
 import { postStudy } from "@/actions/post"
 import { AlgorithmProps, DatasetProps, StudyProps } from "@/const"
+import { ScrollArea } from "@radix-ui/react-scroll-area"
+import { truncateSync } from "fs"
 
 interface TaskFormProps {
     studyId: number,
@@ -152,11 +154,15 @@ export function TaskForm({ studyId, algorithms, datasets }: TaskFormProps) {
                         <SelectValue placeholder="Select a dataset." />
                     </SelectTrigger>
                 </FormControl>
+                <ScrollArea className="h-72">
+                <div className="p-4">
                 <SelectContent className="bg-white">
                         {datasets.map(dataset => (
                             <SelectItem key={'dataset-'+ dataset.pk} className="hover:bg-slate-100" value={dataset.zenodo_id}>{dataset.title + ': ' + dataset.zenodo_id}</SelectItem>
                         ))}
                 </SelectContent>
+                </div>
+                </ScrollArea>
               </Select>
               <FormMessage />
             </FormItem>

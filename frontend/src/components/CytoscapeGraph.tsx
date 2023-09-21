@@ -79,13 +79,15 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({
     const cyRef = useRef<cytoscape.Core | undefined>();
     const cyPopperRef = useRef<any>(null);
     const scalingFactor = 1;
+    const [poppedNodes1, setPoppedNodes1] = useState<string[]>([]);
+    const [poppedNodes2, setPoppedNodes2] = useState<string[]>([]);
+
 
     useEffect(() => {
       const cy = cyRef.current;
       if (!cy) { 
           return;
       }
-      console.log('New elements...')
       elements.forEach((element) => {
       // Check if element is a gene and if it is should be displayed based on the selected filters.
       if (element.data.hasOwnProperty('curie') && cytoRequest.gene_ids.includes(parseInt(element.data.id!.toString()))) {
@@ -105,7 +107,6 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({
         }
         }
         });
-        console.log(elements)
         const newLayout = cy.layout(layout);
         newLayout.run();
         cy.center()
@@ -116,26 +117,37 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({
       if (!cy) {
         return;
       }
-      cy.nodes().on('mouseover', (event) => {
-        cyPopperRef.current =  event.target.popper({
-        content: createContentFromComponent(
-          <GeneHoverCard
-          name={event.target.data()['name']}
-          curie={event.target.data()['curie']}
-          chp_preffered_curie={event.target.data()['chp_preferred_curie']}
-          />
-        ),
-        popper: {
-          placement: 'right',
-        },
-      });
+      cy.nodes().forEach(n => {
+        if (n.id() in poppedNodes1) {
+          return
+        }
+        n.on('mouseover', (event) => {
+          cyPopperRef.current =  event.target.popper({
+          content: createContentFromComponent(
+            <GeneHoverCard
+            name={event.target.data()['name']}
+            curie={event.target.data()['curie']}
+            chp_preffered_curie={event.target.data()['chp_preferred_curie']}
+            />
+          ),
+          popper: {
+            placement: 'right',
+          },
+        })})
+        setPoppedNodes1([...poppedNodes1, n.id()])
     });
-
-    cy.nodes().on('mouseout', () => {
-      if (cyPopperRef) {
-        destroyPopper(cyPopperRef)
+    
+    cy.nodes().forEach(n => {
+      if (n.id() in poppedNodes2) {
+        return
       }
-    });
+      n.on('mouseout', () => {
+        if (cyPopperRef) {
+          destroyPopper(cyPopperRef)
+        }
+      setPoppedNodes2([...poppedNodes2, n.id()])
+    })})
+    
     cy.edges().on('mouseover', (event) => {
       var edge = event.target;
       var annotations = edge.data()['annotations'];
@@ -152,6 +164,9 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({
     cyPopperRef.current =  edge.popper({
       content: createContentFromComponent(
       <EdgeHoverCard
+      sourceName={edge.source().data()['name']}
+      targetName={edge.target().data()['name']}
+      directed={edge.data()['directed']}
       weight={edge.data()['weight']}
       algorithm={edge.data()['algorithm']}
       dataset={edge.data()['dataset']}

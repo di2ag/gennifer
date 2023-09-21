@@ -57,7 +57,7 @@
     "next": "13.4.4",
     "next-auth": "^4.22.1",
     "next-themes": "^0.2.1",
-    "openai": "^3.2.1",
+    "openai": "^4.0.0",
     "postcss": "8.4.24",
     "prism-react-renderer": "^2.0.5",
     "prismjs": "^1.29.0",
@@ -90,6 +90,7 @@
     "@types/cytoscape-popper": "^2.0.1",
     "@types/react-cytoscapejs": "^1.2.2",
     "@types/uuid": "^9.0.2",
+    "encoding": "^0.1.13",
     "tailwindcss-animate": "^1.0.6"
   },
   "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
