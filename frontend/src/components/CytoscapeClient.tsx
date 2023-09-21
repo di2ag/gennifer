@@ -80,7 +80,7 @@ const CytoscapeClient: FC<CytoscapeClientProps> = ({
         //   console.log('Height:', clientHeight);
         //   console.log('Width:', clientWidth);
         }
-      }, [cytoScreenRef.current]);
+      }, []);
 
     useEffect(() => {
         setMaxEvidenceNumber(() => {

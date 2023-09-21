@@ -157,10 +157,10 @@ function EdgeSheet({ sourceName, targetName, directed, weight, algorithm, datase
                 }
                 <Accordion type="single" collapsible className="w-full pb-4">
                 { tr_annotations.map((a: AnnotationProps, i: number) => (
-                    <AccordionItem value={`${a.name}-${i}`}>
-                    <AccordionTrigger>{a.name}</AccordionTrigger>
-                    <AccordionContent>
-                    <div className="grid gap-4 py-4">
+                    <AccordionItem key={`${a.name}-key-${i}`} value={`${a.name}-${i}`}>
+                      <AccordionTrigger>{a.name}</AccordionTrigger>
+                      <AccordionContent>
+                      <div key={`${a.name}-tablediv-${i}`} className="grid gap-4 py-4">
                         <FilterTable
                         columns={evidenceFilterColumns} 
                         data={a.evidence} 
