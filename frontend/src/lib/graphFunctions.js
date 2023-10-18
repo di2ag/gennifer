@@ -63,6 +63,12 @@ export const styleList = [
     }
   },
   {
+    "selector": "edge:selected",
+    "style": {
+      "line-color": "#AAD8FF",
+    }
+  },
+  {
     "selector": "edge[?directed]",
     "style": {
       "target-arrow-color": "#CED0D0",

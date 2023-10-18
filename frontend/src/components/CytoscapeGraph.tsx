@@ -121,7 +121,7 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({
         if (n.id() in poppedNodes1) {
           return
         }
-        n.on('mouseover', (event) => {
+        n.on('tapselect', (event) => {
           cyPopperRef.current =  event.target.popper({
           content: createContentFromComponent(
             <GeneHoverCard
@@ -141,14 +141,14 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({
       if (n.id() in poppedNodes2) {
         return
       }
-      n.on('mouseout', () => {
+      n.on('tapunselect', () => {
         if (cyPopperRef) {
           destroyPopper(cyPopperRef)
         }
       setPoppedNodes2([...poppedNodes2, n.id()])
     })})
     
-    cy.edges().on('mouseover', (event) => {
+    cy.edges().on('tapselect', (event) => {
       var edge = event.target;
       var annotations = edge.data()['annotations'];
       var tr_annotations: AnnotationProps[] = []
@@ -179,7 +179,7 @@ const CytoscapeGraph: FC<CytoscapeGraphProps> = ({
     });
   });
 
-  cy.edges().on('mouseout', () => {
+  cy.edges().on('tapunselect', () => {
     if (cyPopperRef) {
       destroyPopper(cyPopperRef)
     }

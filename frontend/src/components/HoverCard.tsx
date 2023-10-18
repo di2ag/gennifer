@@ -108,9 +108,9 @@ function EdgeSheet({ sourceName, targetName, directed, weight, algorithm, datase
         setLoadingOpenAI(true)
         let systemContent = ''
         if (directed) {
-            systemContent = "You are an expert bioinformatician. You will be provided with a source gene and a target gene, and your task is to briefly explain a possible genetic regulator relationship that the source gene may have on the target gene. If you do think there is a relationship, you should respond with: 'No relationship found.'"
+            systemContent = "You are an expert bioinformatician. You will be provided with a source gene and a target gene, and your task is to briefly explain a possible genetic regulator relationship that the source gene may have on the target gene."
         } else {
-            systemContent = "You are an expert bioinformatician. You will be provided with a two gene names, and your task is to briefly explain a possible genetic regulatory relationship between these genes. If you do not think there is a relationship, you should respond with: 'No relationship found.'"
+            systemContent = "You are an expert bioinformatician. You will be provided with a two gene names, and your task is to briefly explain a possible genetic regulatory relationship between these genes."
         }
         if (sourceName && targetName) {
             let userContent = `Source gene name: ${sourceName}\n Target gene name: ${targetName}.`
@@ -135,7 +135,7 @@ function EdgeSheet({ sourceName, targetName, directed, weight, algorithm, datase
             <SheetHeader>
                 <SheetTitle>Discovered Evidence</SheetTitle>
                 <SheetDescription>
-                    Translator annotationed evidence and Large Language Model (LMM) justification for this edge.
+                    Translator annotationed evidence and Large Language Model (LLM) justification for this edge.
                 </SheetDescription>
             </SheetHeader>
             <div className="flex flex-col pt-4 text-center sm:text-left">
