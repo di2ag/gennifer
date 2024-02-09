@@ -68,12 +68,6 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const { data: session } = useSession();
 
-  React.useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
-      signIn(); // Force sign in to hopefully resolve error
-    }
-  }, [session]);
-
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

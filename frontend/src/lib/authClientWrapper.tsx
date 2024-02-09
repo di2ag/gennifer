@@ -1,9 +1,7 @@
 'use client'
 
 import { signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
 
 export function AuthWrapper ({
     children,
@@ -11,15 +9,12 @@ export function AuthWrapper ({
     children: React.ReactNode
   }) {
     const { data: session } = useSession();
-    const router = useRouter();
   
     useEffect(() => {
-      // check if the error has occurred
-      if (session?.error === "RefreshAccessTokenError") {
-          // Sign out here
-          signOut();
+      if (session?.error) { // may need to be specific e.g. session.error === 'RefreshAccessTokenError'
+          signOut({ callbackUrl: '/' }); // note: we are using the signOut function from the next-auth library
       }
-    }, [session?.error, router]);
+    }, [session?.error]);
   
     return (
       <>{children}</>

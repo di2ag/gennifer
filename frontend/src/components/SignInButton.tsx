@@ -46,17 +46,10 @@ const SignInButton = () => {
     }
 
     const signInWithCredentials = async () => {
-        setIsLoading(true);
-        try {
-            await signIn(undefined, { callbackUrl: '/dashboard' })
-        } catch (error) {
-            toast({
-                title: 'Error signing in with credentials',
-                message: 'Please try again later.',
-                type: 'error',
-            })
-        }
-    }
+      setIsLoading(true);
+      await signIn(undefined, { callbackUrl: '/dashboard'});
+      setIsLoading(false);
+  }
 
   return (
     <Button onClick={(e) => {e.preventDefault(); signInWithCredentials()}} isLoading={isLoading}>

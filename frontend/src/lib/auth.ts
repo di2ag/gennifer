@@ -5,6 +5,8 @@ import jwt_decode from "jwt-decode"
 import { collapseClasses } from "@mui/material";
 import { url } from "inspector";
 import { signOut } from "next-auth/react";
+import { error } from "console";
+import { JWT } from "next-auth/jwt";
 
 function getGoogleCredentials() {
     const clientId = process.env.GOOGLE_CLIENT_ID
@@ -46,6 +48,49 @@ function getUserDetails() {
     return url;
 }
 
+async function getNewAccessAndRefreshTokens(token: JWT) {
+    try {
+
+        // Request newToken (new refresh_token and access_token)
+        var urlencoded = new URLSearchParams();
+        urlencoded.append("grant_type", "refresh_token");
+        urlencoded.append("refresh_token", token.refresh_token);
+        urlencoded.append("client_id", getGenniferCredentials().clientId);
+        urlencoded.append("client_secret", getGenniferCredentials().clientSecret);
+
+        const response = await fetch(getCredentials(), {
+            headers: { 
+                "Content-Type": "application/x-www-form-urlencoded", 
+            },
+            body: urlencoded,
+            method: "POST",
+        })
+
+        const newToken = await response.json();
+        newToken.received_at = Date.now()/1000;
+        newToken.expires_at = newToken.expires_in + newToken.received_at;
+        
+        // Request user details using newToken
+        const userResponse = await fetch(getUserDetails(), {
+            method: "GET",
+            headers: { 
+                "Authorization": "Bearer " + newToken.access_token,
+            },
+        });
+        const user = await userResponse.json();
+
+        if (!response.ok) throw newToken
+        //const user:any = await jwt_decode(newToken.access);
+        return {
+            ...newToken,
+            ...user,
+        }
+            } catch (error) {
+                console.error(error);
+                return { ...token, error: "RefreshAccessTokenError" };
+            }
+  }
+
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -67,7 +112,6 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials, req) {
-                console.log('In authorization.')
                 let username:string = credentials?.username!;
                 let password:string = credentials?.password!;
                 var urlencoded = new URLSearchParams();
@@ -75,6 +119,7 @@ export const authOptions: NextAuthOptions = {
                 urlencoded.append("username", username);
                 urlencoded.append("password", password);
 
+                console.log(req);
                 const response = await fetch(getCredentials(), {
                     method: "POST",
                     headers: { 
@@ -83,12 +128,13 @@ export const authOptions: NextAuthOptions = {
                     },
                     body: urlencoded,
                 });
+                
+
                 const token = await response.json();
                 token.received_at = Date.now()/1000;
-                token.expires_at = token.received_at + token.expires_in;
-                console.log(token);
-                console.log(response.ok);
-                // Now call the me endpoint to get the user details
+                token.expires_at = token.received_at + token.expires_in ;
+
+                // Request user details
                 const userResponse = await fetch(getUserDetails(), {
                     method: "GET",
                     headers: { 
@@ -103,56 +149,32 @@ export const authOptions: NextAuthOptions = {
                         ...user,
                     }
                 }
-                return Promise.reject(new Error(token?.errors));
+                else { // response is not ok, incorrect credentials provided
+                    return null; // Ensures error will be displayed advising user to check credentials
+                }
             }
         })
     ],
     callbacks: {
+        async redirect({ url, baseUrl}) {
+            if (url.startsWith("/")) return `${baseUrl}${url}`
+            else if (new URL(url).origin === baseUrl) return url
+            return baseUrl
+        },
+        
         async jwt({token, user}) {
-            if(user) {
-                // console.log("user yes");
-                // console.log(user);
+            if(user) { // user is being signed in
                 return {
                     ...token,
                     ...user,
                 };
-            } else if ( Math.floor(token.expires_at - Date.now()/1000) > 0 ) {
-                // console.log("token yes");
-                // console.log(token);
-                //console.log(token.exp - Date.now()/1000);
+            } else if ( Math.floor(token.expires_at - Date.now()/1000) > 0 ) { // token has not expired
                 return token
-            } else {
-                //console.log("token no");
-                try {
-                    var urlencoded = new URLSearchParams();
-                    urlencoded.append("grant_type", "refresh_token");
-                    urlencoded.append("refresh_token", token.refresh_token);
-                    urlencoded.append("client_id", getGenniferCredentials().clientId);
-                    urlencoded.append("client_secret", getGenniferCredentials().clientSecret);
-                    const response = await fetch(getCredentials(), {
-                        headers: { 
-                            "Content-Type": "application/x-www-form-urlencoded", 
-                        },
-                        body: urlencoded,
-                        method: "POST",
-                    })
-                    const newToken = await response.json();
-                    newToken.received_at = Date.now()/1000;
-                    newToken.expires_at = newToken.received_at + newToken.expires_in;
-                    // console.log(newToken);
-                    // console.log(response.ok);
-                    //console.log(newToken);
-                    if (!response.ok) throw newToken
-                    //const user:any = await jwt_decode(newToken.access);
-                    return {
-                        ...newToken,
-                    }
-                    } catch (error) {
-                        console.error("Error refreshing Token", error);
-                        return {...token, error: "RefreshAccessTokenError" as const}
-                }
+            } else { // token has expired
+                return getNewAccessAndRefreshTokens(token);
             }
         }, 
+
         async session({session, token}) {
             if(token) {
                 session.user.access = token.access;
@@ -172,10 +194,6 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
  
-        async redirect({ url, baseUrl}) {
-            if (url.startsWith("/")) return `${baseUrl}${url}`
-            else if (new URL(url).origin === baseUrl) return url
-            return baseUrl
-        }
+        
     },
 }
