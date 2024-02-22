@@ -119,7 +119,6 @@ export const authOptions: NextAuthOptions = {
                 urlencoded.append("username", username);
                 urlencoded.append("password", password);
 
-                console.log(req);
                 const response = await fetch(getCredentials(), {
                     method: "POST",
                     headers: { 
