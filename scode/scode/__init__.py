@@ -49,7 +49,18 @@ def create_app(test_config=None):
         
         def post(self):
             args = parser.parse_args()
-            task = create_scode_task.delay(args["zenodo_id"])
+            z = args.get('z')
+            nIter = args.get('nIter')
+            nRep = args.get('nRep')
+            if not z:
+                z = 10
+            if not nIter:
+                nIter = 1000
+            if not nRep:
+                nRep = 6
+
+
+            task = create_scode_task.delay(args["zenodo_id"], z, nIter, nRep)
             return {"task_id": task.id}, 200
 
         def get(self, task_id):

@@ -3,6 +3,7 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 import shutil
+import uuid
 
 from .zenodo import load_file
 
@@ -12,7 +13,7 @@ def generateInputs(zenodo_id):
     '''
     os.makedirs("/tmp/", exist_ok=True) # Create the /tmp/ directory if it doesn't exist
     uniqueID = str(uuid.uuid4())
-    tempUniqueDirPath = "/tmp/" + uniqueID
+    tempUniqueDirPath = "/tmp/" + uniqueID+'/SCODE' 
     os.makedirs(tempUniqueDirPath, exist_ok=True)
     
     ExpressionData = load_file(zenodo_id, 'ExpressionData.csv')
@@ -25,24 +26,24 @@ def generateInputs(zenodo_id):
         # Select cells belonging to each pseudotime trajectory
         colName = colNames[idx]
         index = PTData[colName].index[PTData[colName].notnull()]
-        exprName = "SCODE/ExpressionData"+str(idx)+".csv"
+        exprName = "ExpressionData"+str(idx)+".csv" 
         ExpressionData.loc[:,index].to_csv(
             os.path.join(tempUniqueDirPath, exprName), sep = '\t', header  = False, index = False
             )
-        cellName = "SCODE/PseudoTime"+str(idx)+".csv"
+        cellName = "PseudoTime"+str(idx)+".csv"
         ptDF = PTData.loc[index,[colName]]        
         # SCODE expects a column labeled PseudoTime.
         ptDF.rename(columns = {colName:'PseudoTime'}, inplace = True)
         # output file
         ptDF.to_csv(os.path.join(tempUniqueDirPath, cellName), sep = '\t', header  = False)
-    return tempUniqueDirPath
+    return tempUniqueDirPath, PTData
     
-def run(tempUniqueDirPath, z, nIter, nRep):
+def run(tempUniqueDirPath, z, nIter, nRep, PTData):
     '''
     Function to run SCODE algorithm
     '''
     outDir = tempUniqueDirPath
-    PTData = pd.read_csv(tempUniqueDirPath+'/PseudoTime.csv', header = 0, index_col = 0)
+    #PTData = pd.read_csv(tempUniqueDirPath+'/PseudoTime.csv', header = 0, index_col = 0)
     colNames = PTData.columns
     
 
@@ -54,24 +55,22 @@ def run(tempUniqueDirPath, z, nIter, nRep):
         nGenes = str(ExpressionData.shape[0])
 
         os.makedirs(os.path.join(outDir, str(idx)), exist_ok = True)
-
-        cmdToRun = ' '.join(['ruby SCODE/run_R.rb',
+        os.chdir('/app/SCODE') 
+        cmdToRun = ' '.join(['ruby run_R.rb',
                             os.path.join(tempUniqueDirPath, 'ExpressionData'+str(idx)+'.csv'), 
                             os.path.join(tempUniqueDirPath, 'PseudoTime'+str(idx)+'.csv'), 
                             os.path.join(outDir, str(idx)),
-                             nGenes, z, nCells, nIter, nRep, '\"'])
+                             nGenes, str(z), nCells, str(nIter), str(nRep)])
         print(cmdToRun)
         os.system(cmdToRun)
 
     return tempUniqueDirPath
 
-def parseOutput(tempUniqueDirPath):
+def parseOutput(tempUniqueDirPath, PTData):
     '''
     Function to parse outputs from SCODE.
     ''' 
     outDir = tempUniqueDirPath
-
-    PTData = pd.read_csv(tempUniqueDirPath+'/PseudoTime.csv', header = 0, index_col = 0)
     colNames = PTData.columns
 
     for indx in range(len(colNames)):
@@ -94,7 +93,7 @@ def parseOutput(tempUniqueDirPath):
         DFSorted = OutMatrix[rows, cols]
 
         # read input file for list of gene names
-        ExpressionData = pd.read_csv(os.path.join(tempUniqueDirPath, 'ExpressionData.csv'), header = 0, index_col = 0)
+        ExpressionData = pd.read_csv(os.path.join(tempUniqueDirPath, 'ConvertedExpressionData.csv'), header = 0, index_col = 0)
         GeneList = list(ExpressionData.index)
 
         outFile = open(os.path.join(outDir, 'outFile'+str(indx)+'.csv'), 'w')

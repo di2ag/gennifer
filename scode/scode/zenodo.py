@@ -8,7 +8,7 @@ def load_file(zenodo_id, file_key, base_url="https://zenodo.org/api/records"):
     files = {f["key"]: f for f in r["files"]}
     f = files[file_key]
     download_link = f["links"]["self"]
-    file_type = f["type"]
+    file_type = f["key"].split('.')[1]
     if file_type == 'json':
         return requests.get(download_link).json()
     if file_type  == 'csv':
