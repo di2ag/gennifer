@@ -1,0 +1,13 @@
+celery
+flask-restful
+flask-wtf
+flask
+flower
+gunicorn
+lz4
+numpy
+pandas
+redis
+requests-cache
+requests
+setuptools
