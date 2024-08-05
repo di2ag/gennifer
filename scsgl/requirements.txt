@@ -1,0 +1,16 @@
+celery
+flask-restful
+flask-wtf
+flask
+flower
+gunicorn
+lz4
+numpy
+pandas
+redis
+requests-cache
+requests
+setuptools
+scikit-learn
+rpy2==3.5.12
+numba
