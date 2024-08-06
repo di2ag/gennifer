@@ -25,8 +25,9 @@ USER gennifer_user
 
 #Install pcaPP to use zero inflated Kendall tau as a kernel
 USER root
-RUN Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/mvtnorm/mvtnorm_1.2-4.tar.gz',  dependencies=TRUE, type='source'); if (!library(mvtnorm, logical.return=T)) quit(status=10)"
-RUN Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pcaPP/pcaPP_2.0-3.tar.gz',  dependencies=TRUE, type='source'); if (!library(pcaPP, logical.return=T)) quit(status=10)"
+RUN Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/mvtnorm/mvtnorm_1.2-4.tar.gz', type='source')"
+RUN Rscript -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pcaPP/pcaPP_2.0-3.tar.gz', type='source')"
+
 
 
 USER gennifer_user
