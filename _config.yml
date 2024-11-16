@@ -22,8 +22,8 @@ title: GenNIFER
 email: chase.a.yakaboski@dartmouth.edu
 description: >- # this means to ignore newlines until "baseurl:"
   This is the landing page for the Gene Network Inference For Expression Regulation (GenNIFER) application built for the NIH Biomedical Translator program. 
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://di2ag.github.io/gennifer" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/gennifer"  # The name of your repository
+url: "https://di2ag.github.io"  # Your GitHub Pages URL
 github_username:  yakaboskic
 
 # Build settings
