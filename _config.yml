@@ -27,7 +27,7 @@ url: "https://di2ag.github.io"  # Your GitHub Pages URL
 github_username:  yakaboskic
 
 # Build settings
-theme: minima
+theme: jekyll-theme-minimal
 plugins:
   - jekyll-feed
 
